@@ -1,18 +1,18 @@
-const moneyFormatter = new Intl.NumberFormat('en-US', {
+const moneyFormatter = new Intl.NumberFormat('de-DE', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EUR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
 });
 
-const penniesFormatter = new Intl.NumberFormat('en-US', {
+const penniesFormatter = new Intl.NumberFormat('de-DE', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EUR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
 });
 
-const percentFormatter = new Intl.NumberFormat('en-US', {
+const percentFormatter = new Intl.NumberFormat('de-DE', {
     style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
@@ -40,7 +40,8 @@ export default class Util {
         if (amount === null || amount === '') return '';
         let value = showPennies ? penniesFormatter.format(amount) : moneyFormatter.format(amount);
         if (withSymbol === false) {
-            return value.substring(1);
+            // return value.substring(1);
+            return value.slice(0, -1);
         }
         return value;
     }
@@ -48,10 +49,11 @@ export default class Util {
     static percentValue(amount, withSymbol) {
         if (amount === null || amount === '') return '';
         let value = percentFormatter.format(amount);
+        alert(amount)
         if (withSymbol === false) {
             return value.substring(0, value.length - 1);
         }
-        return value;
+        return parseInt(value);
     }
 
     static numberValueOrDefault(value, minValue, defaultValue) {

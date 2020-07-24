@@ -9,8 +9,8 @@ import PaymentSchedule from "./PaymentSchedule";
 import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
 
-const DefaultPrice = 500000;
-const DefaultDownPayment = 100000;
+const DefaultPrice = 900000;
+const DefaultDownPayment = DefaultPrice*20/100;
 const DefaultInterestRate = 0.045;
 const DefaultTermMonths = 360;
 const DefaultTaxRate = 0.0125;
@@ -218,16 +218,17 @@ export default class MortgageCalculator extends React.Component {
         if (payoffMessage.length > 0) payoffMessage = `Fully paid in ${payoffMessage}`;
 
         const downPaymentPercent = downPayment.length === 0 ? '' : (totalPrice > 0 && downPayment > 0) ? downPayment / totalPrice : DefaultDownPaymentPercent;
-
+        // alert(Util.moneyValue(totalPrice, false, false))
+        // alert(Util.percentValue(downPaymentPercent, false))
         return (
             <div className={styles.container}>
                 <form className={styles.inputForm}>
                     <InputWrapper styles={styles} label="Home Price">
-                        <IconInput styles={styles} icon="$" type="text" name="price" value={Util.moneyValue(totalPrice, false, false)} onChange={this.onPriceChange}/>
+                        <IconInput styles={styles} icon="€" type="text" name="price" value={Util.moneyValue(totalPrice, false, false)} onChange={this.onPriceChange}/>
                     </InputWrapper>
 
                     <InputWrapper styles={styles} label="Down Payment">
-                        <IconInput styles={styles} icon="$" type="text" name="downPayment" value={Util.moneyValue(downPayment, false, false)} onChange={this.onDownPaymentChange}/>
+                        <IconInput styles={styles} icon="€" type="text" name="downPayment" value={Util.moneyValue(downPayment, false, false)} onChange={this.onDownPaymentChange}/>
                         <IconInput styles={styles} icon="%" type="number" name="downPaymentPercent" value={Util.percentValue(downPaymentPercent, false)} onChange={this.onDownPaymentPercentChange}/>
                     </InputWrapper>
 
@@ -247,101 +248,16 @@ export default class MortgageCalculator extends React.Component {
                         </select>
                     </InputWrapper>
 
-
-                    <InputWrapper styles={styles} label="Additional Principal Payment" subtext={payoffMessage}>
-                        <IconInput styles={styles} icon="$" type="text" name="additionalPrincipal" value={Util.moneyValue(additionalPrincipal, false, false)} onChange={this.onAdditionalPrincipalChange}/>
-                    </InputWrapper>
-
-
-                    <div className={styles.advancedButton}>
-                        <button type="button" onClick={() => this.setState({showAdvanced: !showAdvanced})}>{showAdvanced ? "Hide" : "Show"} Advanced</button>
-                    </div>
-                    {showAdvanced ? (
-                        <div className={styles.advanced}>
-                            <InputWrapper styles={styles} label="Tax Rate">
-                                <IconInput styles={styles} icon="%" type="number" name="taxRate" defaultValue={Util.percentValue(taxRate, false)} step="0.01" onInput={this.onTaxRateChange}/>
-                            </InputWrapper>
-
-
-                            <InputWrapper styles={styles} label="Insurance Rate">
-                                <IconInput styles={styles} icon="%" type="number" name="insuranceRate" defaultValue={Util.percentValue(insuranceRate, false)} step="0.01" onInput={this.onInsuranceRateChange}/>
-                            </InputWrapper>
-
-
-                            <InputWrapper styles={styles} label="Mortgage Insurance Rate">
-                                <IconInput styles={styles} icon="%" type="number" name="mortgageInsuranceRate" defaultValue={Util.percentValue(mortgageInsuranceRate, false)} step="0.01" onInput={this.onMortgageInsuranceRateChange}/>
-                            </InputWrapper>
-
-
-                            <InputWrapper styles={styles} label="Mortgage Insurance">
-                                <Switch active={mortgageInsuranceEnabled} onChange={this.onMortgageInsuranceEnabledChange}/>
-                            </InputWrapper>
-                        </div>
-                    ) : null}
                 </form>
-                <div className={styles.results}>
-                    <div className={styles.resultRow}>
-                        <div className={styles.resultLabel}>
-                            Loan Amount:
-                        </div>
-                        <div className={styles.resultValue}>
-                            {Util.moneyValue(loanAmount)}
-                        </div>
-                    </div>
-                    <div className={styles.resultRow}>
-                        <div className={styles.resultLabel}>
-                            Principal & Interest:
-                        </div>
-                        <div className={styles.resultValue}>
-                            {Util.moneyValue(principalAndInterest)}
-                        </div>
-                    </div>
-                    <div className={styles.resultRow}>
-                        <div className={styles.resultLabel}>
-                            Monthly Tax:
-                        </div>
-                        <div className={styles.resultValue}>
-                            {Util.moneyValue(tax)}
-                        </div>
-                    </div>
-                    <div className={styles.resultRow}>
-                        <div className={styles.resultLabel}>
-                            Monthly Insurance:
-                        </div>
-                        <div className={styles.resultValue}>
-                            {Util.moneyValue(insurance)}
-                        </div>
-                    </div>
-                    {mortgageInsurance > 0 ? (
-                        <div className={styles.resultRow}>
-                            <div className={styles.resultLabel}>
-                                Monthly PMI:
-                            </div>
-                            <div className={styles.resultValue}>
-                                {Util.moneyValue(mortgageInsurance)}
-                            </div>
-                        </div>
-                    ): null}
-                    <div className={`${styles.resultRow} ${styles.totalPayment}`}>
-                        <div className={styles.resultLabel}>
-                            Total Payment:
-                        </div>
-                        <div className={styles.resultValue}>
-                            {Util.moneyValue(total)}
-                        </div>
-                    </div>
-                </div>
+                
 
                 {this.props.showPaymentSchedule ? (
                     <div className={styles.schedule}>
-                        <h3>Payment Schedule</h3>
+                        <h3>Comparison</h3>
                         <PaymentSchedule mortgage={this.state.mortgage}/>
                     </div>
                 ) : null}
 
-                <div className={styles.versionInfo}>
-                    <a href="https://github.com/tommymcglynn/mortgage-calculator-react">mortgage-calculator-react {pjson.version}</a>
-                </div>
             </div>
         );
     }
