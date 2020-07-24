@@ -8,12 +8,12 @@ import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
 
 const DefaultPrice = 800000;
-const DefaultInterestRate = 0.03;
+const DefaultInterestRate = 0.01;
 const numberOfOptions = 10;
 const stepYears = 5;
-const DefaultTaxRate = 0.12;
-const DefaultInsuranceRate = 0.14;
-const DefaultMortgageInsuranceRate = 0.11;
+const DefaultTaxRate = 0.01;
+const DefaultInsuranceRate = 0;
+const DefaultMortgageInsuranceRate = 0;
 const DefaultDownPaymentPercent = 0.2;
 const DefaultAdditionalPrincipalPayment = 0;
 
@@ -80,6 +80,7 @@ export default class MortgageCalculator extends React.Component {
       additionalPrincipal: 0,
       mortgage: this.mortgageCalculator.calculatePayment(),
       showMonthlyPayments: false,
+      insuranceEnabled: this.mortgageCalculator.insuranceEnabled,
     };
 
     this.onPriceChange = this.onPriceChange.bind(this);
@@ -215,7 +216,7 @@ export default class MortgageCalculator extends React.Component {
   }
 
   onInsuranceRateChange(e) {
-    let value = Util.percentToValue(e.target.value);
+    let value = e.target ? Util.percentToValue(e.target.value) : "";
     if (isNaN(value)) return;
     this.mortgageCalculator.insuranceRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
@@ -228,10 +229,14 @@ export default class MortgageCalculator extends React.Component {
   onMortgageInsuranceRateChange(e) {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
-    this.mortgageCalculator.mortgageInsuranceRate = value;
+
     let mortgage = this.mortgageCalculator.calculatePayment();
-    this.setState({
-      mortgage: mortgage,
+    this.setState((prevState) => {
+      this.mortgageCalculator.mortgageInsuranceRate = value;
+      return {
+        ...prevState,
+        mortgage: mortgage,
+      };
     });
     this.onMortgageChange(mortgage);
   }
@@ -248,6 +253,14 @@ export default class MortgageCalculator extends React.Component {
     });
     this.onMortgageChange(mortgage);
   }
+  onInsuranceEnabledChange = (e) => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        insuranceEnabled: !prevState.insuranceEnabled,
+      };
+    });
+  };
 
   renderMonths = (months) => {
     let output = [];
@@ -276,7 +289,6 @@ export default class MortgageCalculator extends React.Component {
       mortgageInsurance,
       total,
     } = this.state.mortgage;
-    console.log(this.state.mortgage.total);
     const {
       interestRate,
       taxRate,
@@ -326,7 +338,7 @@ export default class MortgageCalculator extends React.Component {
               type="number"
               name="downPaymentPercent"
               value={Util.percentValue(downPaymentPercent, false)}
-              step="0,01"
+              step="0.01"
               onChange={this.onDownPaymentPercentChange}
             />
           </InputWrapper>
@@ -337,7 +349,7 @@ export default class MortgageCalculator extends React.Component {
               icon="%"
               type="number"
               name="interestRate"
-              step="0,01"
+              step="0.01"
               defaultValue={Util.percentValue(interestRate, false)}
               onInput={this.onInterestRateChange}
             />
@@ -360,24 +372,32 @@ export default class MortgageCalculator extends React.Component {
               type="number"
               name="taxRate"
               defaultValue={Util.percentValue(taxRate, false)}
-              step="0,01"
+              step="0.01"
               onInput={this.onTaxRateChange}
             />
           </InputWrapper>
 
           <InputWrapper styles={styles} label="Assurance habitation">
-            <IconInput
-              styles={styles}
-              icon="%"
-              type="number"
-              name="insuranceRate"
-              defaultValue={Util.percentValue(insuranceRate, false)}
-              step="0,01"
-              onInput={this.onInsuranceRateChange}
+            <Switch
+              active={this.state.insuranceEnabled}
+              onChange={this.onInsuranceEnabledChange}
             />
           </InputWrapper>
+          {this.state.insuranceEnabled ? (
+            <InputWrapper styles={styles}>
+              <IconInput
+                styles={styles}
+                icon="%"
+                type="number"
+                name="insuranceRate"
+                defaultValue={Util.percentValue(insuranceRate, false)}
+                step="0.01"
+                onInput={this.onInsuranceRateChange}
+              />
+            </InputWrapper>
+          ) : null}
 
-          <InputWrapper styles={styles} label="Assurance de prêt">
+          <InputWrapper styles={styles} label="Assurance du prêt">
             <Switch
               active={mortgageInsuranceEnabled}
               onChange={this.onMortgageInsuranceEnabledChange}
@@ -416,22 +436,24 @@ export default class MortgageCalculator extends React.Component {
             <div className={styles.resultLabel}>Taxe foncière mensuelle:</div>
             <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
           </div>
-          <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>Assurance habitation:</div>
-            <div className={styles.resultValue}>
-              {Util.moneyValue(insurance)}
+          {this.state.insuranceEnabled ? (
+            <div className={styles.resultRow}>
+              <div className={styles.resultLabel}>Assurance habitation:</div>
+              <div className={styles.resultValue}>
+                {Util.moneyValue(insurance)}
+              </div>
             </div>
-          </div>
+          ) : null}
           {mortgageInsuranceEnabled ? (
             <div className={styles.resultRow}>
-              <div className={styles.resultLabel}>Assurance de prêt:</div>
+              <div className={styles.resultLabel}>Assurance du prêt:</div>
               <div className={styles.resultValue}>
                 {Util.moneyValue(mortgageInsurance)}
               </div>
             </div>
           ) : null}
           <div className={`${styles.resultRow} ${styles.totalPayment}`}>
-            <div className={styles.resultLabel}>Coût Mensuel Total:</div>
+            <div className={styles.resultLabel}>Coût Total Mensuel:</div>
             <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
           </div>
         </div>
