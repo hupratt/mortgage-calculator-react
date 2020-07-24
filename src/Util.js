@@ -35,25 +35,32 @@ export default class Util {
         let value = parseInt(money.replace(/\D/g, ""));
         return !isNaN(value) ? value : '';
     }
+    static getValidTermMonths(range) {
+        let array = [];
+        for (let j = range; j > 0; j--) {
+            array.push(j);
+        }
+        return array.map((element)=>element*5)
+    }
+    
 
     static moneyValue(amount, showPennies = false, withSymbol = true) {
         if (amount === null || amount === '') return '';
         let value = showPennies ? penniesFormatter.format(amount) : moneyFormatter.format(amount);
         if (withSymbol === false) {
             // return value.substring(1);
-            return value.slice(0, -1);
+            return value.slice(0, -1).trim();
         }
-        return value;
+        return value.trim();
     }
 
     static percentValue(amount, withSymbol) {
         if (amount === null || amount === '') return '';
         let value = percentFormatter.format(amount);
-        alert(amount)
         if (withSymbol === false) {
-            return value.substring(0, value.length - 1);
+            return value.substring(0, value.length - 1).trim();
         }
-        return parseInt(value);
+        return value.trim();
     }
 
     static numberValueOrDefault(value, minValue, defaultValue) {
