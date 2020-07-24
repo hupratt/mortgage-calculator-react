@@ -1,6 +1,6 @@
 module.exports = {
     entry: [
-        './src/MortgageCalculator.js'
+        './public/src/index.js'
     ],
     module: {
         rules: [
@@ -19,11 +19,11 @@ module.exports = {
         extensions: ['*', '.js', '.jsx']
     },
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/public/dist',
         publicPath: '/',
-        filename: 'MortgageCalculator.js',
-        library: 'mortgage-calculator-react',
-        libraryTarget: 'umd',
-        umdNamedDefine: true
+        filename: 'bundle.js'
+    },
+    devServer: {
+        contentBase: './public/dist'
     }
 };
