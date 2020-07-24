@@ -1,76 +1,79 @@
-const moneyFormatter = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+const moneyFormatter = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
 });
 
-const penniesFormatter = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+const penniesFormatter = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
 });
 
-const percentFormatter = new Intl.NumberFormat('fr-FR', {
-    style: 'percent',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+const percentFormatter = new Intl.NumberFormat("fr-FR", {
+  style: "percent",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
 });
 
 export default class Util {
-    static percentToValue(percent) {
-        let value = parseFloat(percent);
-        if (isNaN(value)) {
-            return NaN;
-        }
-        if (value < 0) {
-            return 0;
-        }
-        return value / 100;
+  static percentToValue(percent) {
+    let value = parseFloat(percent);
+    if (isNaN(value)) {
+      return NaN;
     }
+    if (value < 0) {
+      return 0;
+    }
+    return value / 100;
+  }
 
-    static moneyToValue(money) {
-        if (money === undefined) return '';
-        let value = parseInt(money.replace(/\D/g, ""));
-        return !isNaN(value) ? value : '';
+  static moneyToValue(money) {
+    if (money === undefined) return "";
+    let value = parseInt(money.replace(/\D/g, ""));
+    return !isNaN(value) ? value : "";
+  }
+  static getValidTermMonths(range) {
+    let array = [];
+    for (let j = range; j > 0; j--) {
+      array.push(j);
     }
-    static getValidTermMonths(range) {
-        let array = [];
-        for (let j = range; j > 0; j--) {
-            array.push(j);
-        }
-        return array.map((element)=>element*5)
-    }
-    
+    return array.map((element) => element * 5);
+  }
 
-    static moneyValue(amount, showPennies = false, withSymbol = true) {
-        if (amount === null || amount === '') return '';
-        let value = showPennies ? penniesFormatter.format(amount) : moneyFormatter.format(amount);
-        if (withSymbol === false) {
-            // return value.substring(1);
-            return value.slice(0, -1).trim();
-        }
-        return value.trim();
+  static moneyValue(amount, showPennies = false, withSymbol = true) {
+    if (amount === null || amount === "") return "";
+    let value = showPennies
+      ? penniesFormatter.format(amount)
+      : moneyFormatter.format(amount);
+    if (withSymbol === false) {
+      // return value.substring(1);
+      return value.slice(0, -1).trim();
     }
+    return value.trim();
+  }
 
-    static percentValue(amount, withSymbol) {
-        if (amount === null || amount === '') return '';
-        let value = percentFormatter.format(amount);
-        if (withSymbol === false) {
-            return value.substring(0, value.length - 1).trim();
-        }
-        return value.trim();
+  static percentValue(amount, withSymbol) {
+    if (amount === null || amount === "") return "";
+    let value = percentFormatter.format(amount);
+    if (withSymbol === false) {
+      return value.substring(0, value.length - 1).trim();
     }
+    return value.trim();
+  }
 
-    static numberValueOrDefault(value, minValue, defaultValue) {
-        if (value == null || isNaN(value) || value < minValue) return defaultValue;
-        return value;
-    }
+  static numberValueOrDefault(value, minValue, defaultValue) {
+    if (value == null || isNaN(value) || value < minValue) return defaultValue;
+    return value;
+  }
 
-    static numberValueInSetOrDefault(value, possibleValues, defaultValue) {
-        if (!Array.isArray(possibleValues)) throw "possibleValues must be an array.";
-        if (value == null || isNaN(value) || !possibleValues.includes(value)) return defaultValue;
-        return value;
-    }
+  static numberValueInSetOrDefault(value, possibleValues, defaultValue) {
+    if (!Array.isArray(possibleValues))
+      throw "possibleValues must be an array.";
+    if (value == null || isNaN(value) || !possibleValues.includes(value))
+      return defaultValue;
+    return value;
+  }
 }
