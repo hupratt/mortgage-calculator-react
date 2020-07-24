@@ -1,25 +1,24 @@
 import Switch from "./Switch";
-import Util from "./Util";
-
 import React from "react";
+import Util from "./Util";
 import mortgageJs from "mortgage-js";
-import pjson from "../package.json";
 import DefaultStyles from "./DefaultStyle.css";
 import PaymentSchedule from "./PaymentSchedule";
 import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
 
-const DefaultPrice = 900000;
-const DefaultDownPayment = (DefaultPrice * 20) / 100;
+const DefaultPrice = 800000;
 const DefaultInterestRate = 0.045;
-const DefaultTermMonths = 360;
+const numberOfOptions = 10;
+const stepYears = 5
 const DefaultTaxRate = 0.0125;
 const DefaultInsuranceRate = 0.0014;
 const DefaultMortgageInsuranceRate = 0.011;
 const DefaultDownPaymentPercent = 0.2;
 const DefaultAdditionalPrincipalPayment = 0;
 
-const numberOfOptions = 8;
+const DefaultTermMonths = numberOfOptions*12*stepYears;
+const DefaultDownPayment = (DefaultPrice * 20) / 100;
 
 export default class MortgageCalculator extends React.Component {
   mortgageCalculator = mortgageJs.createMortgageCalculator();
@@ -80,6 +79,7 @@ export default class MortgageCalculator extends React.Component {
         .mortgageInsuranceEnabled,
       additionalPrincipal: 0,
       mortgage: this.mortgageCalculator.calculatePayment(),
+      showMonthlyPayments:false
     };
 
     this.onPriceChange = this.onPriceChange.bind(this);
@@ -182,7 +182,7 @@ export default class MortgageCalculator extends React.Component {
   onTermMonthsChange(e) {
     let value = e.target.value;
     if (isNaN(value)) return;
-    this.mortgageCalculator.months = value;
+    this.mortgageCalculator.months = parseInt(value)*12;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState({
       mortgage: mortgage,
@@ -205,6 +205,7 @@ export default class MortgageCalculator extends React.Component {
 
   onTaxRateChange(e) {
     let value = Util.percentToValue(e.target.value);
+    alert(value)
     if (isNaN(value)) return;
     this.mortgageCalculator.taxRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
@@ -263,7 +264,7 @@ export default class MortgageCalculator extends React.Component {
     const {
       totalPrice,
       downPayment,
-      showAdvanced,
+      showMonthlyPayments,
       additionalPrincipal,
     } = this.state;
     const {
@@ -274,6 +275,7 @@ export default class MortgageCalculator extends React.Component {
       mortgageInsurance,
       total,
     } = this.state.mortgage;
+    console.log(this.state.mortgage)
     const {
       interestRate,
       taxRate,
@@ -306,10 +308,11 @@ export default class MortgageCalculator extends React.Component {
         : DefaultDownPaymentPercent;
     // alert(Util.moneyValue(totalPrice, false, false))
     // alert(Util.percentValue(downPaymentPercent, false))
+    
     return (
       <div className={styles.container}>
         <form className={styles.inputForm}>
-          <InputWrapper styles={styles} label="Home Price">
+          <InputWrapper styles={styles} label="Prix du bien">
             <IconInput
               styles={styles}
               icon="€"
@@ -320,7 +323,7 @@ export default class MortgageCalculator extends React.Component {
             />
           </InputWrapper>
 
-          <InputWrapper styles={styles} label="Down Payment">
+          <InputWrapper styles={styles} label="Acompte">
             <IconInput
               styles={styles}
               icon="€"
@@ -339,7 +342,7 @@ export default class MortgageCalculator extends React.Component {
             />
           </InputWrapper>
 
-          <InputWrapper styles={styles} label="Interest Rate">
+          <InputWrapper styles={styles} label="Taux d'intérêt effectif TAEG">
             <IconInput
               styles={styles}
               icon="%"
@@ -351,7 +354,7 @@ export default class MortgageCalculator extends React.Component {
             />
           </InputWrapper>
 
-          <InputWrapper styles={styles} label="Loan Term">
+          <InputWrapper styles={styles} label="Horizon de l'emprunt">
             <select
               className="custom-select"
               name="termMonths"
@@ -361,11 +364,30 @@ export default class MortgageCalculator extends React.Component {
               {this.renderMonths(monthsArr)}
             </select>
           </InputWrapper>
-        </form>
+                            <InputWrapper styles={styles} label="Tax Rate">
+                                <IconInput styles={styles} icon="%" type="number" name="taxRate" defaultValue={Util.percentValue(taxRate, false)} step="0.01" onInput={this.onTaxRateChange}/>
+                            </InputWrapper>
 
-        {this.props.showPaymentSchedule ? (
+
+                            <InputWrapper styles={styles} label="Insurance Rate">
+                                <IconInput styles={styles} icon="%" type="number" name="insuranceRate" defaultValue={Util.percentValue(insuranceRate, false)} step="0.01" onInput={this.onInsuranceRateChange}/>
+                            </InputWrapper>
+
+
+                            <InputWrapper styles={styles} label="Mortgage Insurance Rate">
+                                <IconInput styles={styles} icon="%" type="number" name="mortgageInsuranceRate" defaultValue={Util.percentValue(mortgageInsuranceRate, false)} step="0.01" onInput={this.onMortgageInsuranceRateChange}/>
+                            </InputWrapper>
+
+
+                            <InputWrapper styles={styles} label="Mortgage Insurance">
+                                <Switch active={mortgageInsuranceEnabled} onChange={this.onMortgageInsuranceEnabledChange}/>
+                            </InputWrapper>
+        </form>
+        <div className={styles.advancedButton}>
+                        <button type="button" onClick={() => this.setState({showMonthlyPayments: !showMonthlyPayments})}>{showMonthlyPayments ? "Cacher" : "Montrer"} les paiements mensuels</button>
+                    </div>
+        {showMonthlyPayments && this.props.showPaymentSchedule ? (
           <div className={styles.schedule}>
-            <h3>Comparison</h3>
             <PaymentSchedule mortgage={this.state.mortgage} />
           </div>
         ) : null}

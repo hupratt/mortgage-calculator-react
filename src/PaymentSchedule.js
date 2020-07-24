@@ -5,7 +5,7 @@ import DefaultStyles from './DefaultStyle.css';
 export default class PaymentSchedule extends React.Component {
     render() {
         const mortgage = this.props.mortgage;
-        const {paymentSchedule} = mortgage;
+        const {paymentSchedule, total} = mortgage;
         const styles = this.props.styles || DefaultStyles;
         const showPennies = false;
         const paymentRows = paymentSchedule.map(function(payment) {
@@ -16,7 +16,7 @@ export default class PaymentSchedule extends React.Component {
                 }
                 return (
                     <li key={payment.count} className={rowClass}>
-                        <div>{!isYearlyPayment ? payment.count : "Year "+(payment.count / 12)}</div>
+                        <div>{!isYearlyPayment ? payment.count : "Année "+(payment.count / 12)}</div>
                         <div>{Util.moneyValue(payment.principalPayment, showPennies)}</div>
                         <div>{Util.moneyValue(payment.interestPayment, showPennies)}</div>
                         <div>{Util.moneyValue(payment.totalInterest, showPennies)}</div>
@@ -26,13 +26,14 @@ export default class PaymentSchedule extends React.Component {
             }
         );
         return (
+            
             <ul className={styles.paymentList}>
                 <li className={styles.paymentRow+" "+styles.paymentHeader}>
                     <div>#</div>
-                    <div>Principal</div>
-                    <div>Interest</div>
-                    <div>Total Interest</div>
-                    <div>Balance</div>
+                    <div>Remboursement du Principal</div>
+                    <div>Remboursement des Intérêts</div>
+                    <div>Intérêts cumulés</div>
+                    <div>Reste à payer</div>
                 </li>
                 {paymentRows}
             </ul>

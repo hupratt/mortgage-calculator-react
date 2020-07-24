@@ -7,9 +7,9 @@ import PaymentSchedule from "./PaymentSchedule";
 
 
 const root = (
-    <React.Fragment>
+    <div className="container">
         <MortgageCalculator showPaymentSchedule />
-    </React.Fragment>
+    </div>
 );
 
 ReactDOM.render(

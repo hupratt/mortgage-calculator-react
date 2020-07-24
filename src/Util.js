@@ -1,18 +1,18 @@
-const moneyFormatter = new Intl.NumberFormat('de-DE', {
+const moneyFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
 });
 
-const penniesFormatter = new Intl.NumberFormat('de-DE', {
+const penniesFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
 });
 
-const percentFormatter = new Intl.NumberFormat('de-DE', {
+const percentFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
