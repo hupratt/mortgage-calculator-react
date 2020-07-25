@@ -35,21 +35,19 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         data-event="click"
       />
       <li className={_styles.paymentRow + " " + _styles.paymentHeader}>
-        <div>#</div>
+        <div>Mois</div>
 
         <div data-tip="Mensualité - Remboursement des Intérêts">
-          Remboursement du Principal:
+          Remboursement du Principal
         </div>
-        <div data-tip="Principal * tauxMensuel">
-          Remboursement des Intérêts:
-        </div>
-        <div data-tip="Σ Principal * tauxMensuel">Intérêts payés cumulés:</div>
-        <div data-tip="Solde restant à payer">Principal: </div>
+        <div data-tip="Principal * tauxMensuel">Remboursement des Intérêts</div>
+        <div data-tip="Σ Principal * tauxMensuel">Intérêts payés cumulés</div>
+        <div data-tip="Solde restant à payer">Principal </div>
         <div data-tip="Valeur de l'investissement: achat d'une propriété">
-          Investment 1:
+          Investment 1
         </div>
         <div data-tip="Valeur de l'investissement: location d'une propriété + ETF">
-          Investment 2:
+          Investment 2
         </div>
       </li>
       {paymentRows}
