@@ -1,6 +1,10 @@
 const defaultPrice = 500000;
+const defaultNotaryFee = 33000;
+const defaultYearlyMaintenanceFee = 1000;
+const defaultMonthlyRent = 500;
 const defaultDownPayment = 100000;
 const defaultInterestRate = 0.05;
+const defaultTransactionFeeRate = 0.003;
 const defaultReturnRate = 0.05;
 const defaultHouseAppreciationRate = 0.01;
 const defaultMonths = 360;
@@ -16,8 +20,12 @@ const calculateMonthlyRate = (rate) => {
 };
 class MortgageCalculator {
   constructor() {
+    this.interestRate = defaultInterestRate;
+    this.notaryFee = defaultNotaryFee;
+    this.yearlyMaintenanceFee = defaultYearlyMaintenanceFee;
     this.houseAppreciationRate = defaultHouseAppreciationRate;
-    this.houseAppreciationRate = defaultHouseAppreciationRate;
+    this.transactionFeeRate = defaultTransactionFeeRate;
+    this.monthlyRent = defaultMonthlyRent;
     this.totalPrice = defaultPrice;
     this.downPayment = defaultDownPayment;
     this.returnRate = defaultReturnRate;
@@ -39,6 +47,10 @@ class MortgageCalculator {
       this.totalPrice,
       this.houseAppreciationRate,
       this.returnRate,
+      this.transactionFeeRate,
+      this.monthlyRent,
+      this.notaryFee,
+      this.yearlyMaintenanceFee,
       this.additionalPrincipalPayment
     );
     let piPayment = paymentSchedule.length
@@ -68,14 +80,14 @@ class MortgageCalculator {
       mortgageInsurance: mortgageInsurance,
     });
     return {
-      loanAmount: loanAmount,
+      loanAmount,
       principalAndInterest: piPayment,
       tax: propertyTax,
       insurance: homeOwnerInsurance,
       total: piPayment + propertyTax + homeOwnerInsurance + mortgageInsurance,
       termMonths: this.months,
-      paymentSchedule: paymentSchedule,
-      mortgageInsurance: mortgageInsurance,
+      paymentSchedule,
+      mortgageInsurance,
     };
   }
 
@@ -86,6 +98,10 @@ class MortgageCalculator {
     totalPrice,
     houseAppreciationRate,
     returnRate,
+    transactionFeeRate,
+    monthlyRent,
+    notaryFee,
+    yearlyMaintenanceFee,
     additionalPrincipalPayments = 0
   ) {
     const monthlyRate = calculateMonthlyRate(annualRate);
@@ -129,6 +145,10 @@ class MortgageCalculator {
         balance: principal,
         housePrice,
         returnRate,
+        transactionFeeRate,
+        monthlyRent,
+        notaryFee,
+        yearlyMaintenanceFee,
       };
       i++;
     }
@@ -157,34 +177,7 @@ const _calc = new MortgageCalculator();
 
 module.exports = {
   calculateMonthlyRate,
-  createMortgageCalculator: function () {
-    return new MortgageCalculator();
-  },
-  calculatePayment: function (
-    houseAppreciationRate = defaultHouseAppreciationRate,
-    totalPrice = defaultPrice,
-    downPayment = defaultDownPayment,
-    interestRate = defaultInterestRate,
-    months = defaultMonths,
-    taxRate = defaultTaxRate,
-    insuranceRate = defaultInsuranceRate,
-    mortgageInsuranceRate = defaultMortgageInsuranceRate,
-    mortgageInsuranceEnabled = defaultMortgageInsuranceEnabled,
-    mortgageInsuranceThreshold = defaultMortgageInsuranceThreshold,
-    additionalPrincipalPayment = defaultAdditionalPrincipalPayment
-  ) {
-    _calc.houseAppreciationRate = houseAppreciationRate;
-    _calc.totalPrice = totalPrice;
-    _calc.downPayment = downPayment;
-    _calc.interestRate = interestRate;
-    _calc.months = months;
-    _calc.taxRate = taxRate;
-    _calc.insuranceRate = insuranceRate;
-    _calc.mortgageInsuranceRate = mortgageInsuranceRate;
-    _calc.mortgageInsuranceEnabled = mortgageInsuranceEnabled;
-    _calc.mortgageInsuranceThreshold = mortgageInsuranceThreshold;
-    _calc.additionalPrincipalPayment = additionalPrincipalPayment;
-    return _calc.calculatePayment();
-  },
+  createMortgageCalculator: () => new MortgageCalculator(),
+  calculatePayment: () => _calc.calculatePayment(),
   nextPenny: MortgageCalculator.nextPenny,
 };

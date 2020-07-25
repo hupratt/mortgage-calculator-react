@@ -23,6 +23,10 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         <div>{Util.moneyValue(payment.balance, showPennies)}</div>
         <div>{Util.moneyValue(payment.housePrice, showPennies)}</div>
         <div>{Util.moneyValue(payment.returnRate, showPennies)}</div>
+        <div>{payment.transactionFeeRate}</div>
+        <div>{payment.monthlyRent}</div>
+        <div>{payment.notaryFee}</div>
+        <div>{payment.yearlyMaintenanceFee}</div>
       </li>
     );
   });
@@ -51,6 +55,10 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         <div data-tip="Valeur de l'investissement: location d'une propriété + ETF">
           Investment 2:
         </div>
+        <div>fee ETF:</div>
+        <div>Loyer</div>
+        <div>Notary</div>
+        <div>Maintenance Fee</div>
       </li>
       {paymentRows}
     </ul>

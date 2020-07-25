@@ -8,8 +8,12 @@ import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
 
 const DefaultPrice = 800000;
+const DefaultNotaryFee = 30000;
+const DefaultYearlyMaintenanceFee = 1000;
 const DefaultInterestRate = 0.01;
-const DefaultReturnRate = 0.09;
+const DefaultReturnRate = 0.085;
+const DefaultMonthlyRent = 900;
+const DefaultTransactionFeeRate = 0.003;
 const DefaultYearlyAppreciationRate = 0.03;
 const numberOfOptions = 10;
 const stepYears = 5;
@@ -42,6 +46,26 @@ export default class MortgageCalculator extends React.Component {
       props.interestRate,
       0,
       DefaultInterestRate
+    );
+    this.mortgageCalculator.transactionFeeRate = Util.numberValueOrDefault(
+      props.transactionFeeRate,
+      0,
+      DefaultTransactionFeeRate
+    );
+    this.mortgageCalculator.yearlyMaintenanceFee = Util.numberValueOrDefault(
+      props.yearlyMaintenanceFee,
+      0,
+      DefaultYearlyMaintenanceFee
+    );
+    this.mortgageCalculator.monthlyRent = Util.numberValueOrDefault(
+      props.monthlyRent,
+      0,
+      DefaultMonthlyRent
+    );
+    this.mortgageCalculator.notaryFee = Util.numberValueOrDefault(
+      props.notaryFee,
+      0,
+      DefaultNotaryFee
     );
     this.mortgageCalculator.returnRate = Util.numberValueOrDefault(
       props.returnRate,
@@ -219,6 +243,42 @@ export default class MortgageCalculator extends React.Component {
       mortgage: mortgage,
     });
   };
+  onTransactionFeeChange = (e) => {
+    let value = Util.percentToValue(e.target.value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.transactionFeeRate = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
+  onRentChange = (e) => {
+    let value = Util.moneyToValue(e.target.value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.monthlyRent = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
+  onNotaryFeeChange = (e) => {
+    let value = Util.moneyToValue(e.target.value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.notaryFee = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
+  onYearlyMaintenanceFeeChange = (e) => {
+    let value = Util.moneyToValue(e.target.value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.yearlyMaintenanceFee = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
 
   onInsuranceRateChange = (e) => {
     let value = e.target ? Util.percentToValue(e.target.value) : "";
@@ -302,9 +362,12 @@ export default class MortgageCalculator extends React.Component {
       monthsArr,
       yearlyAppreciationRate,
       returnRate,
+      transactionFeeRate,
+      monthlyRent,
+      notaryFee,
+      yearlyMaintenanceFee,
     } = this.mortgageCalculator;
     const styles = this.props.styles || DefaultStyles;
-
     const downPaymentPercent =
       downPayment.length === 0
         ? ""
@@ -397,10 +460,56 @@ export default class MortgageCalculator extends React.Component {
                 icon="%"
                 data-tip="Rendement annuel de l'ETF ou autre instrument financier"
                 type="number"
-                name="taxRate"
+                name="returnRate"
                 defaultValue={Util.percentValue(returnRate, false)}
                 step="0.01"
                 onInput={this.onReturnRateChange}
+              />
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Frais de transaction ETF">
+              <IconInput
+                styles={styles}
+                icon="%"
+                data-tip="Frais de transaction lié à l'ETF"
+                type="number"
+                name="transactionFeeRate"
+                defaultValue={Util.percentValue(transactionFeeRate, false)}
+                step="0.001"
+                onInput={this.onTransactionFeeChange}
+              />
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Loyer">
+              <IconInput
+                styles={styles}
+                icon="€"
+                type="number"
+                name="monthlyRent"
+                defaultValue={Util.moneyValue(monthlyRent, false, false)}
+                step="1"
+                onInput={this.onRentChange}
+              />
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Frais de notaire">
+              <IconInput
+                styles={styles}
+                icon="€"
+                type="number"
+                name="notaryFee"
+                defaultValue={parseInt(notaryFee)}
+                step="1"
+                onInput={this.onNotaryFeeChange}
+              />
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Frais de maintenance">
+              <IconInput
+                styles={styles}
+                icon="€"
+                data-tip="Frais de maintenance de du bien immobilier"
+                type="number"
+                name="maintenanceFee"
+                defaultValue={parseInt(yearlyMaintenanceFee)}
+                step="1"
+                onInput={this.onYearlyMaintenanceFeeChange}
               />
             </InputWrapper>
 
