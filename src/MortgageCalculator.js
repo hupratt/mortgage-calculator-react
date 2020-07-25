@@ -9,6 +9,7 @@ import IconInput from "./IconInput";
 
 const DefaultPrice = 800000;
 const DefaultInterestRate = 0.01;
+const DefaultReturnRate = 0.09;
 const DefaultYearlyAppreciationRate = 0.03;
 const numberOfOptions = 10;
 const stepYears = 5;
@@ -42,8 +43,13 @@ export default class MortgageCalculator extends React.Component {
       0,
       DefaultInterestRate
     );
+    this.mortgageCalculator.returnRate = Util.numberValueOrDefault(
+      props.returnRate,
+      0,
+      DefaultReturnRate
+    );
     this.mortgageCalculator.yearlyAppreciationRate = Util.numberValueOrDefault(
-      props.interestRate,
+      props.yearlyAppreciationRate,
       0,
       DefaultYearlyAppreciationRate
     );
@@ -161,10 +167,21 @@ export default class MortgageCalculator extends React.Component {
     });
   };
 
-  onYearlyAppreciationRate = (e) => {
+  onReturnRateChange = (e) => {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
-    this.mortgageCalculator.yearlyAppreciationRate = value;
+    this.mortgageCalculator.returnRate = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
+
+  onYearlyAppreciationRate = (e) => {
+    let value = Util.percentToValue(e.target.value);
+    console.log("value", value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.houseAppreciationRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState({
       mortgage: mortgage,
@@ -284,6 +301,7 @@ export default class MortgageCalculator extends React.Component {
       months,
       monthsArr,
       yearlyAppreciationRate,
+      returnRate,
     } = this.mortgageCalculator;
     const styles = this.props.styles || DefaultStyles;
 
@@ -373,6 +391,18 @@ export default class MortgageCalculator extends React.Component {
                 onInput={this.onTaxRateChange}
               />
             </InputWrapper>
+            <InputWrapper styles={styles} label="Rendement ETF">
+              <IconInput
+                styles={styles}
+                icon="%"
+                data-tip="Rendement annuel de l'ETF ou autre instrument financier"
+                type="number"
+                name="taxRate"
+                defaultValue={Util.percentValue(returnRate, false)}
+                step="0.01"
+                onInput={this.onReturnRateChange}
+              />
+            </InputWrapper>
 
             <InputWrapper styles={styles} label="Assurance habitation">
               <Switch
@@ -439,7 +469,7 @@ export default class MortgageCalculator extends React.Component {
             </div>
             <div
               className={styles.resultRow}
-              data-tip="Taux d'intérêt mensuel calculé à partir de la TAEG"
+              data-tip="Math.pow(1 + TAEG, 1 / 12) - 1;"
             >
               <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
               <div className={styles.resultValue}>

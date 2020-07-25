@@ -1,6 +1,8 @@
 const defaultPrice = 500000;
 const defaultDownPayment = 100000;
 const defaultInterestRate = 0.05;
+const defaultReturnRate = 0.05;
+const defaultHouseAppreciationRate = 0.01;
 const defaultMonths = 360;
 const defaultTaxRate = 0.0126;
 const defaultInsuranceRate = 0.0014;
@@ -14,9 +16,11 @@ const calculateMonthlyRate = (rate) => {
 };
 class MortgageCalculator {
   constructor() {
+    this.houseAppreciationRate = defaultHouseAppreciationRate;
+    this.houseAppreciationRate = defaultHouseAppreciationRate;
     this.totalPrice = defaultPrice;
     this.downPayment = defaultDownPayment;
-    this.interestRate = defaultInterestRate;
+    this.returnRate = defaultReturnRate;
     this.months = defaultMonths;
     this.taxRate = defaultTaxRate;
     this.insuranceRate = defaultInsuranceRate;
@@ -32,6 +36,9 @@ class MortgageCalculator {
       loanAmount,
       this.interestRate,
       this.months,
+      this.totalPrice,
+      this.houseAppreciationRate,
+      this.returnRate,
       this.additionalPrincipalPayment
     );
     let piPayment = paymentSchedule.length
@@ -76,6 +83,9 @@ class MortgageCalculator {
     loanAmount,
     annualRate,
     termMonths,
+    totalPrice,
+    houseAppreciationRate,
+    returnRate,
     additionalPrincipalPayments = 0
   ) {
     const monthlyRate = calculateMonthlyRate(annualRate);
@@ -85,11 +95,15 @@ class MortgageCalculator {
       termMonths
     );
     let principal = MortgageCalculator.roundPenny(loanAmount);
+    let housePrice = totalPrice;
     let payments = [];
     let totalInterest = 0;
     let totalPayments = 0;
     let i = 0;
     while (principal > 0 && i < termMonths) {
+      housePrice = MortgageCalculator.roundPenny(
+        housePrice * (1 + calculateMonthlyRate(houseAppreciationRate))
+      );
       let interestPayment = MortgageCalculator.roundPenny(
         principal * monthlyRate
       );
@@ -107,12 +121,14 @@ class MortgageCalculator {
       totalPayments += totalPayment;
       payments[i] = {
         count: i + 1,
-        interestPayment: interestPayment,
-        totalInterest: totalInterest,
-        principalPayment: principalPayment,
-        totalPayment: totalPayment,
-        totalPayments: totalPayments,
+        interestPayment,
+        totalInterest,
+        principalPayment,
+        totalPayment,
+        totalPayments,
         balance: principal,
+        housePrice,
+        returnRate,
       };
       i++;
     }
@@ -145,6 +161,7 @@ module.exports = {
     return new MortgageCalculator();
   },
   calculatePayment: function (
+    houseAppreciationRate = defaultHouseAppreciationRate,
     totalPrice = defaultPrice,
     downPayment = defaultDownPayment,
     interestRate = defaultInterestRate,
@@ -156,6 +173,7 @@ module.exports = {
     mortgageInsuranceThreshold = defaultMortgageInsuranceThreshold,
     additionalPrincipalPayment = defaultAdditionalPrincipalPayment
   ) {
+    _calc.houseAppreciationRate = houseAppreciationRate;
     _calc.totalPrice = totalPrice;
     _calc.downPayment = downPayment;
     _calc.interestRate = interestRate;
