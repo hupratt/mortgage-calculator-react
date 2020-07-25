@@ -1,0 +1,94 @@
+* {
+  font-family: courier;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* Layout */
+.grid {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.grid .column {
+  position: relative;
+  overflow: hidden;
+  width: 50%;
+  text-align: center;
+}
+.grid .column img {
+  position: relative;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+  opacity: 0.8;
+}
+.grid .column .content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding: 2em;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.3rem;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.grid .column .content::before,
+.grid .column .content::after {
+  pointer-events: none;
+}
+
+.grid .column h2 {
+  word-spacing: -0.15rem;
+  font-weight: 300;
+}
+
+.grid .column h2 span {
+  display: block;
+  font-weight: 800;
+  font-size: 2.8rem;
+}
+
+.grid .column h2,
+.grid .column p {
+  margin: 0;
+}
+
+.grid .column p {
+  letter-spacing: 1px;
+  font-size: 68.5%;
+}
+
+#west {
+  background: url(https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/cd36d436499555.571edc76c7f9b.jpg)
+    no-repeat top center;
+  background-size: cover;
+}
+#east {
+  background: url(https://cdn.dribbble.com/users/1013025/screenshots/10778650/image.png)
+    no-repeat center top;
+  background-size: cover;
+}
+#west .content {
+  background: rgba(25, 235, 248, 0.5);
+}
+#east .content {
+  background: rgba(234, 210, 24, 0.5);
+}

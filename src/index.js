@@ -2,9 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import MortgageCalculator from "./MortgageCalculator";
 import ReactTooltip from "react-tooltip";
+import "./App.css";
 
 const root = (
-  <div className="container">
+  <React.Fragment>
     <ReactTooltip
       place="bottom"
       effect="solid"
@@ -12,7 +13,7 @@ const root = (
       data-event="click"
     />
     <MortgageCalculator showPaymentSchedule />
-  </div>
+  </React.Fragment>
 );
 
 ReactDOM.render(root, document.getElementById("root"));
