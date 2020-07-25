@@ -230,9 +230,9 @@ export default class MortgageCalculator extends React.Component {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
 
+    this.mortgageCalculator.mortgageInsuranceRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState((prevState) => {
-      this.mortgageCalculator.mortgageInsuranceRate = value;
       return {
         ...prevState,
         mortgage: mortgage,
@@ -242,9 +242,10 @@ export default class MortgageCalculator extends React.Component {
   }
 
   onMortgageInsuranceEnabledChange(e) {
-    let mortgage = this.mortgageCalculator.calculatePayment();
+    let mortgage;
     this.setState((prevState) => {
       this.mortgageCalculator.mortgageInsuranceEnabled = !prevState.mortgageInsuranceEnabled;
+      mortgage = this.mortgageCalculator.calculatePayment();
       return {
         ...prevState,
         mortgageInsuranceEnabled: !prevState.mortgageInsuranceEnabled,
@@ -267,7 +268,7 @@ export default class MortgageCalculator extends React.Component {
     months.map((element, index) => {
       output.push(
         <option key={index} value={element}>
-          {element} years
+          {element} ans
         </option>
       );
     });
@@ -433,12 +434,16 @@ export default class MortgageCalculator extends React.Component {
             </div>
           </div>
           <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>Taxe foncière mensuelle:</div>
+            <div className={styles.resultLabel}>
+              Taxe foncière mensuelle: (Prix du bien * taux)/12
+            </div>
             <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
           </div>
           {this.state.insuranceEnabled ? (
             <div className={styles.resultRow}>
-              <div className={styles.resultLabel}>Assurance habitation:</div>
+              <div className={styles.resultLabel}>
+                Assurance habitation: (Prix du bien * taux)/12
+              </div>
               <div className={styles.resultValue}>
                 {Util.moneyValue(insurance)}
               </div>
@@ -446,7 +451,9 @@ export default class MortgageCalculator extends React.Component {
           ) : null}
           {mortgageInsuranceEnabled ? (
             <div className={styles.resultRow}>
-              <div className={styles.resultLabel}>Assurance du prêt:</div>
+              <div className={styles.resultLabel}>
+                Assurance du prêt: (Montant emprunté * taux)/12
+              </div>
               <div className={styles.resultValue}>
                 {Util.moneyValue(mortgageInsurance)}
               </div>
