@@ -9,6 +9,9 @@ const defaultMortgageInsuranceEnabled = true;
 const defaultMortgageInsuranceThreshold = 1;
 const defaultAdditionalPrincipalPayment = 0;
 
+const calculateMonthlyRate = (rate) => {
+  return Math.pow(1 + rate, 1 / 12) - 1;
+};
 class MortgageCalculator {
   constructor() {
     this.totalPrice = defaultPrice;
@@ -75,7 +78,7 @@ class MortgageCalculator {
     termMonths,
     additionalPrincipalPayments = 0
   ) {
-    const monthlyRate = this.calculateMonthlyRate(annualRate);
+    const monthlyRate = calculateMonthlyRate(annualRate);
     const monthlyPayment = MortgageCalculator.calculateMonthlyPIPayment(
       loanAmount,
       annualRate,
@@ -116,12 +119,9 @@ class MortgageCalculator {
 
     return payments;
   }
-  static calculateMonthlyRate(rate) {
-    return Math.pow(1 + rate, 1 / 12) - 1;
-  }
 
   static calculateMonthlyPIPayment(loanAmount, annualRate, termMonths) {
-    let monthlyRate = this.calculateMonthlyRate(annualRate);
+    let monthlyRate = calculateMonthlyRate(annualRate);
     let payment =
       (monthlyRate * loanAmount * Math.pow(1 + monthlyRate, termMonths)) /
       (Math.pow(1 + monthlyRate, termMonths) - 1);
@@ -140,6 +140,7 @@ class MortgageCalculator {
 const _calc = new MortgageCalculator();
 
 module.exports = {
+  calculateMonthlyRate,
   createMortgageCalculator: function () {
     return new MortgageCalculator();
   },

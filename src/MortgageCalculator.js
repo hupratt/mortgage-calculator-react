@@ -1,15 +1,15 @@
 import Switch from "./Switch";
 import React from "react";
 import Util from "./Util";
-import mortgageJs from "./mortgage-js-modified";
+import mortgageJs, { calculateMonthlyRate } from "./mortgage-js-modified";
 import DefaultStyles from "./DefaultStyle.css";
 import PaymentSchedule from "./PaymentSchedule";
 import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
-import ReactTooltip from "react-tooltip";
 
 const DefaultPrice = 800000;
 const DefaultInterestRate = 0.01;
+const DefaultYearlyAppreciationRate = 0.03;
 const numberOfOptions = 10;
 const stepYears = 5;
 const DefaultTaxRate = 0.01;
@@ -41,6 +41,11 @@ export default class MortgageCalculator extends React.Component {
       props.interestRate,
       0,
       DefaultInterestRate
+    );
+    this.mortgageCalculator.yearlyAppreciationRate = Util.numberValueOrDefault(
+      props.interestRate,
+      0,
+      DefaultYearlyAppreciationRate
     );
     this.mortgageCalculator.monthsArr = Util.getValidTermMonths(
       numberOfOptions
@@ -150,6 +155,16 @@ export default class MortgageCalculator extends React.Component {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
     this.mortgageCalculator.interestRate = value;
+    let mortgage = this.mortgageCalculator.calculatePayment();
+    this.setState({
+      mortgage: mortgage,
+    });
+  };
+
+  onYearlyAppreciationRate = (e) => {
+    let value = Util.percentToValue(e.target.value);
+    if (isNaN(value)) return;
+    this.mortgageCalculator.yearlyAppreciationRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState({
       mortgage: mortgage,
@@ -268,6 +283,7 @@ export default class MortgageCalculator extends React.Component {
       mortgageInsuranceEnabled,
       months,
       monthsArr,
+      yearlyAppreciationRate,
     } = this.mortgageCalculator;
     const styles = this.props.styles || DefaultStyles;
 
@@ -277,190 +293,208 @@ export default class MortgageCalculator extends React.Component {
         : totalPrice > 0 && downPayment > 0
         ? downPayment / totalPrice
         : DefaultDownPaymentPercent;
-    // alert(Util.moneyValue(totalPrice, false, false))
-    // alert(Util.percentValue(downPaymentPercent, false))
-    // alert(Util.percentValue(interestRate, false));
     return (
-      <div className={styles.container}>
-        <form className={styles.inputForm}>
-          <InputWrapper styles={styles} label="Prix du bien">
-            <IconInput
-              styles={styles}
-              icon="€"
-              type="text"
-              name="price"
-              value={Util.moneyValue(totalPrice, false, false)}
-              onChange={this.onPriceChange}
-            />
-          </InputWrapper>
+      <React.Fragment>
+        <div className={styles.container}>
+          <form className={styles.inputForm}>
+            <InputWrapper styles={styles} label="Prix du bien">
+              <IconInput
+                styles={styles}
+                icon="€"
+                type="text"
+                name="price"
+                value={Util.moneyValue(totalPrice, false, false)}
+                onChange={this.onPriceChange}
+              />
+            </InputWrapper>
 
-          <InputWrapper styles={styles} label="Acompte">
-            <IconInput
-              styles={styles}
-              icon="€"
-              type="text"
-              name="downPayment"
-              value={Util.moneyValue(downPayment, false, false)}
-              onChange={this.onDownPaymentChange}
-            />
-            <IconInput
-              styles={styles}
-              icon="%"
-              type="number"
-              name="downPaymentPercent"
-              value={Util.percentValue(downPaymentPercent, false)}
-              step="0.01"
-              onChange={this.onDownPaymentPercentChange}
-            />
-          </InputWrapper>
-          <ReactTooltip place="top" effect="solid" delayHide={1000} />
-          <InputWrapper styles={styles} label="TAEG">
-            <IconInput
-              data-tip="Taux d'intérêt effectif annuel TAEG: comprend le taux d’intérêt, l’assurance, et les frais éventuels liés au crédit tels que les frais de dossier"
-              styles={styles}
-              icon="%"
-              type="number"
-              name="interestRate"
-              step="0.01"
-              defaultValue={Util.percentValue(interestRate, false)}
-              onInput={this.onInterestRateChange}
-            />
-          </InputWrapper>
-
-          <InputWrapper styles={styles} label="Horizon de l'emprunt">
-            <select
-              className="custom-select"
-              name="termMonths"
-              onInput={this.onTermMonthsChange}
-              defaultValue={months}
-            >
-              {this.renderMonths(monthsArr)}
-            </select>
-          </InputWrapper>
-          <InputWrapper styles={styles} label="Taxe Foncière">
-            <IconInput
-              styles={styles}
-              icon="%"
-              type="number"
-              name="taxRate"
-              defaultValue={Util.percentValue(taxRate, false)}
-              step="0.01"
-              onInput={this.onTaxRateChange}
-            />
-          </InputWrapper>
-
-          <InputWrapper styles={styles} label="Assurance habitation">
-            <Switch
-              active={this.state.insuranceEnabled}
-              onChange={this.onInsuranceEnabledChange}
-            />
-          </InputWrapper>
-          {this.state.insuranceEnabled ? (
-            <InputWrapper styles={styles}>
+            <InputWrapper styles={styles} label="Acompte">
+              <IconInput
+                styles={styles}
+                icon="€"
+                type="text"
+                name="downPayment"
+                value={Util.moneyValue(downPayment, false, false)}
+                onChange={this.onDownPaymentChange}
+              />
               <IconInput
                 styles={styles}
                 icon="%"
                 type="number"
-                name="insuranceRate"
-                defaultValue={Util.percentValue(insuranceRate, false)}
+                name="downPaymentPercent"
+                value={Util.percentValue(downPaymentPercent, false)}
                 step="0.01"
-                onInput={this.onInsuranceRateChange}
+                onChange={this.onDownPaymentPercentChange}
               />
             </InputWrapper>
-          ) : null}
+            <InputWrapper styles={styles} label="TAEG">
+              <IconInput
+                data-tip="Taux d'intérêt effectif annuel TAEG: comprend le taux d’intérêt, l’assurance, et les frais éventuels liés au crédit tels que les frais de dossier"
+                styles={styles}
+                icon="%"
+                type="number"
+                name="interestRate"
+                step="0.01"
+                defaultValue={Util.percentValue(interestRate, false)}
+                onInput={this.onInterestRateChange}
+              />
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Appréciation du bien">
+              <IconInput
+                data-tip="Taux d'appréciation annuel du bien"
+                styles={styles}
+                icon="%"
+                type="number"
+                name="yearlyAppreciationRate"
+                step="0.01"
+                defaultValue={Util.percentValue(yearlyAppreciationRate, false)}
+                onInput={this.onYearlyAppreciationRate}
+              />
+            </InputWrapper>
 
-          <InputWrapper styles={styles} label="Assurance du prêt">
-            <Switch
-              active={mortgageInsuranceEnabled}
-              onChange={this.onMortgageInsuranceEnabledChange}
-            />
-          </InputWrapper>
-          {mortgageInsuranceEnabled ? (
-            <InputWrapper styles={styles}>
+            <InputWrapper styles={styles} label="Horizon de l'emprunt">
+              <select
+                className="custom-select"
+                name="termMonths"
+                onInput={this.onTermMonthsChange}
+                defaultValue={months}
+              >
+                {this.renderMonths(monthsArr)}
+              </select>
+            </InputWrapper>
+            <InputWrapper styles={styles} label="Taxe Foncière">
               <IconInput
                 styles={styles}
                 icon="%"
                 type="number"
-                name="mortgageInsuranceRate"
-                defaultValue={Util.percentValue(mortgageInsuranceRate, false)}
+                name="taxRate"
+                defaultValue={Util.percentValue(taxRate, false)}
                 step="0.01"
-                onInput={this.onMortgageInsuranceRateChange}
+                onInput={this.onTaxRateChange}
               />
             </InputWrapper>
-          ) : null}
-        </form>
-        <div className={styles.results}>
-          <div className={styles.resultRow} data-tip="Montant emprunté">
-            <div className={styles.resultLabel}>Emprunt:</div>
-            <div className={styles.resultValue}>
-              {Util.moneyValue(loanAmount)}
-            </div>
-          </div>
-          <div
-            className={styles.resultRow}
-            data-tip="tauxMensuel * montantEmprunté * Math.pow(1 + tauxMensuel, horizon)) /
-      (Math.pow(1 + tauxMensuel, horizon) - 1);"
-          >
-            <div className={styles.resultLabel}>Mensualité:</div>
-            <div className={styles.resultValue}>
-              {Util.moneyValue(principalAndInterest)}
-            </div>
-          </div>
-          <div
-            className={styles.resultRow}
-            data-tip="Taxe foncière mensuelle: (Prix du bien * taux)/12"
-          >
-            <div className={styles.resultLabel}>Taxe foncière</div>
-            <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
-          </div>
-          {this.state.insuranceEnabled ? (
-            <div
-              className={styles.resultRow}
-              data-tip="Assurance habitation mensuelle: (Prix du bien * taux)/12"
-            >
-              <div className={styles.resultLabel}>Assurance habitation</div>
-              <div className={styles.resultValue}>
-                {Util.moneyValue(insurance)}
-              </div>
-            </div>
-          ) : null}
-          {mortgageInsuranceEnabled ? (
-            <div
-              className={styles.resultRow}
-              data-tip="Assurance mensuelle du prêt: (Montant emprunté * taux)/12"
-            >
-              <div className={styles.resultLabel}>Assurance du prêt:</div>
-              <div className={styles.resultValue}>
-                {Util.moneyValue(mortgageInsurance)}
-              </div>
-            </div>
-          ) : null}
-          <div
-            className={`${styles.resultRow} ${styles.totalPayment}`}
-            data-tip="Coût Total Mensuel"
-          >
-            <div className={styles.resultLabel}>Total:</div>
-            <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
-          </div>
-        </div>
 
-        <div className={styles.advancedButton}>
-          <button
-            type="button"
-            onClick={() =>
-              this.setState({ showMonthlyPayments: !showMonthlyPayments })
-            }
-          >
-            {showMonthlyPayments ? "Cacher" : "Afficher"} le détail des
-            paiements mensuels
-          </button>
-        </div>
-        {showMonthlyPayments && this.props.showPaymentSchedule ? (
-          <div className={styles.schedule}>
-            <PaymentSchedule mortgage={this.state.mortgage} />
+            <InputWrapper styles={styles} label="Assurance habitation">
+              <Switch
+                active={this.state.insuranceEnabled}
+                onChange={this.onInsuranceEnabledChange}
+              />
+            </InputWrapper>
+            {this.state.insuranceEnabled ? (
+              <InputWrapper styles={styles}>
+                <IconInput
+                  styles={styles}
+                  icon="%"
+                  type="number"
+                  name="insuranceRate"
+                  defaultValue={Util.percentValue(insuranceRate, false)}
+                  step="0.01"
+                  onInput={this.onInsuranceRateChange}
+                />
+              </InputWrapper>
+            ) : null}
+
+            <InputWrapper styles={styles} label="Assurance du prêt">
+              <Switch
+                active={mortgageInsuranceEnabled}
+                onChange={this.onMortgageInsuranceEnabledChange}
+              />
+            </InputWrapper>
+            {mortgageInsuranceEnabled ? (
+              <InputWrapper styles={styles}>
+                <IconInput
+                  styles={styles}
+                  icon="%"
+                  type="number"
+                  name="mortgageInsuranceRate"
+                  defaultValue={Util.percentValue(mortgageInsuranceRate, false)}
+                  step="0.01"
+                  onInput={this.onMortgageInsuranceRateChange}
+                />
+              </InputWrapper>
+            ) : null}
+          </form>
+          <div className={styles.results}>
+            <div className={styles.resultRow} data-tip="Montant emprunté">
+              <div className={styles.resultLabel}>Emprunt:</div>
+              <div className={styles.resultValue}>
+                {Util.moneyValue(loanAmount)}
+              </div>
+            </div>
+            <div
+              className={styles.resultRow}
+              data-tip={`tauxMensuel* montantEmprunté * Math.pow(1 + tauxMensuel, horizon)) /(Math.pow(1 + tauxMensuel, horizon) - 1);`}
+            >
+              <div className={styles.resultLabel}>Mensualité:</div>
+              <div className={styles.resultValue}>
+                {Util.moneyValue(principalAndInterest)}
+              </div>
+            </div>
+            <div
+              className={styles.resultRow}
+              data-tip="Taxe foncière mensuelle: (Prix du bien * taux)/12"
+            >
+              <div className={styles.resultLabel}>Taxe foncière</div>
+              <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
+            </div>
+            <div
+              className={styles.resultRow}
+              data-tip="Taux d'intérêt mensuel calculé à partir de la TAEG"
+            >
+              <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
+              <div className={styles.resultValue}>
+                {Util.percentValue(calculateMonthlyRate(interestRate))}
+              </div>
+            </div>
+            {this.state.insuranceEnabled ? (
+              <div
+                className={styles.resultRow}
+                data-tip="Assurance habitation mensuelle: (Prix du bien * taux)/12"
+              >
+                <div className={styles.resultLabel}>Assurance habitation</div>
+                <div className={styles.resultValue}>
+                  {Util.moneyValue(insurance)}
+                </div>
+              </div>
+            ) : null}
+            {mortgageInsuranceEnabled ? (
+              <div
+                className={styles.resultRow}
+                data-tip="Assurance mensuelle du prêt: (Montant emprunté * taux)/12"
+              >
+                <div className={styles.resultLabel}>Assurance du prêt:</div>
+                <div className={styles.resultValue}>
+                  {Util.moneyValue(mortgageInsurance)}
+                </div>
+              </div>
+            ) : null}
+            <div
+              className={`${styles.resultRow} ${styles.totalPayment}`}
+              data-tip="Coût Total Mensuel"
+            >
+              <div className={styles.resultLabel}>Total:</div>
+              <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
+            </div>
           </div>
-        ) : null}
-      </div>
+
+          <div className={styles.advancedButton}>
+            <button
+              type="button"
+              onClick={() =>
+                this.setState({ showMonthlyPayments: !showMonthlyPayments })
+              }
+            >
+              {showMonthlyPayments ? "Cacher" : "Afficher"} le détail des
+              paiements mensuels
+            </button>
+          </div>
+          {showMonthlyPayments ? (
+            <div className={styles.schedule}>
+              <PaymentSchedule mortgage={this.state.mortgage} />
+            </div>
+          ) : null}
+        </div>
+      </React.Fragment>
     );
   }
 }

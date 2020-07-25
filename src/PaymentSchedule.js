@@ -38,13 +38,11 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         <div data-tip="Mensualité - Remboursement des Intérêts">
           Remboursement du Principal:
         </div>
-        <div data-tip="Principal * Math.pow(1 + rate, 1 / 12) - 1">
-          Remboursement des Intérêts: - 1
+        <div data-tip="Principal * tauxMensuel">
+          Remboursement des Intérêts:
         </div>
-        <div data-tip="Σ Principal * Math.pow(1 + rate, 1 / 12) - 1">
-          Intérêts payés cumulés:
-        </div>
-        <div data-tip="Reste à payer">Solde: </div>
+        <div data-tip="Σ Principal * tauxMensuel">Intérêts payés cumulés:</div>
+        <div data-tip="Solde restant à payer">Principal: </div>
       </li>
       {paymentRows}
     </ul>
