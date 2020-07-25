@@ -1,11 +1,12 @@
 import Switch from "./Switch";
 import React from "react";
 import Util from "./Util";
-import mortgageJs from "mortgage-js";
+import mortgageJs from "./mortgage-js-modified";
 import DefaultStyles from "./DefaultStyle.css";
 import PaymentSchedule from "./PaymentSchedule";
 import InputWrapper from "./InputWrapper";
 import IconInput from "./IconInput";
+import ReactTooltip from "react-tooltip";
 
 const DefaultPrice = 800000;
 const DefaultInterestRate = 0.01;
@@ -343,9 +344,10 @@ export default class MortgageCalculator extends React.Component {
               onChange={this.onDownPaymentPercentChange}
             />
           </InputWrapper>
-
-          <InputWrapper styles={styles} label="Taux d'intérêt effectif TAEG">
+          <ReactTooltip place="top" effect="solid" delayHide={1000} />
+          <InputWrapper styles={styles} label="TAEG">
             <IconInput
+              data-tip="Taux d'intérêt effectif annuel TAEG: comprend le taux d’intérêt, l’assurance, et les frais éventuels liés au crédit tels que les frais de dossier"
               styles={styles}
               icon="%"
               type="number"
@@ -419,48 +421,56 @@ export default class MortgageCalculator extends React.Component {
           ) : null}
         </form>
         <div className={styles.results}>
-          <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>Montant emprunté:</div>
+          <div className={styles.resultRow} data-tip="Montant emprunté">
+            <div className={styles.resultLabel}>Emprunt:</div>
             <div className={styles.resultValue}>
               {Util.moneyValue(loanAmount)}
             </div>
           </div>
-          <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>
-              Principal + Intérêts mensuels:
-            </div>
+          <div
+            className={styles.resultRow}
+            data-tip="tauxMensuel * montantEmprunté * Math.pow(1 + tauxMensuel, horizon)) /
+      (Math.pow(1 + tauxMensuel, horizon) - 1);"
+          >
+            <div className={styles.resultLabel}>Mensualité:</div>
             <div className={styles.resultValue}>
               {Util.moneyValue(principalAndInterest)}
             </div>
           </div>
-          <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>
-              Taxe foncière mensuelle: (Prix du bien * taux)/12
-            </div>
+          <div
+            className={styles.resultRow}
+            data-tip="Taxe foncière mensuelle: (Prix du bien * taux)/12"
+          >
+            <div className={styles.resultLabel}>Taxe foncière</div>
             <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
           </div>
           {this.state.insuranceEnabled ? (
-            <div className={styles.resultRow}>
-              <div className={styles.resultLabel}>
-                Assurance habitation: (Prix du bien * taux)/12
-              </div>
+            <div
+              className={styles.resultRow}
+              data-tip="Assurance habitation mensuelle: (Prix du bien * taux)/12"
+            >
+              <div className={styles.resultLabel}>Assurance habitation</div>
               <div className={styles.resultValue}>
                 {Util.moneyValue(insurance)}
               </div>
             </div>
           ) : null}
           {mortgageInsuranceEnabled ? (
-            <div className={styles.resultRow}>
-              <div className={styles.resultLabel}>
-                Assurance du prêt: (Montant emprunté * taux)/12
-              </div>
+            <div
+              className={styles.resultRow}
+              data-tip="Assurance mensuelle du prêt: (Montant emprunté * taux)/12"
+            >
+              <div className={styles.resultLabel}>Assurance du prêt:</div>
               <div className={styles.resultValue}>
                 {Util.moneyValue(mortgageInsurance)}
               </div>
             </div>
           ) : null}
-          <div className={`${styles.resultRow} ${styles.totalPayment}`}>
-            <div className={styles.resultLabel}>Coût Total Mensuel:</div>
+          <div
+            className={`${styles.resultRow} ${styles.totalPayment}`}
+            data-tip="Coût Total Mensuel"
+          >
+            <div className={styles.resultLabel}>Total:</div>
             <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
           </div>
         </div>
