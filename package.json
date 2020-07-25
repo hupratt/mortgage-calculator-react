@@ -32,7 +32,6 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "mortgage-js": "^0.1.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-tooltip": "^4.2.7"

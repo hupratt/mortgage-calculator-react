@@ -83,30 +83,9 @@ export default class MortgageCalculator extends React.Component {
       showMonthlyPayments: false,
       insuranceEnabled: this.mortgageCalculator.insuranceEnabled,
     };
-
-    this.onPriceChange = this.onPriceChange.bind(this);
-    this.onDownPaymentChange = this.onDownPaymentChange.bind(this);
-    this.onDownPaymentPercentChange = this.onDownPaymentPercentChange.bind(
-      this
-    );
-    this.onInterestRateChange = this.onInterestRateChange.bind(this);
-    this.onTermMonthsChange = this.onTermMonthsChange.bind(this);
-    this.onAdditionalPrincipalChange = this.onAdditionalPrincipalChange.bind(
-      this
-    );
-    this.onTaxRateChange = this.onTaxRateChange.bind(this);
-    this.onInsuranceRateChange = this.onInsuranceRateChange.bind(this);
-    this.onMortgageInsuranceRateChange = this.onMortgageInsuranceRateChange.bind(
-      this
-    );
-    this.onMortgageInsuranceEnabledChange = this.onMortgageInsuranceEnabledChange.bind(
-      this
-    );
   }
 
-  onMortgageChange(mortgage) {}
-
-  onPriceChange(e) {
+  onPriceChange = (e) => {
     let value = e.target.value;
     if (value.length === 0) {
       this.setState({
@@ -129,10 +108,9 @@ export default class MortgageCalculator extends React.Component {
       downPayment: downPayment,
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onDownPaymentChange(e) {
+  onDownPaymentChange = (e) => {
     let value = e.target.value;
     if (value.length === 0) {
       this.setState({
@@ -148,10 +126,9 @@ export default class MortgageCalculator extends React.Component {
       downPayment: value,
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onDownPaymentPercentChange(e) {
+  onDownPaymentPercentChange = (e) => {
     let value = e.target.value;
     if (value.length === 0) {
       this.setState({
@@ -167,10 +144,9 @@ export default class MortgageCalculator extends React.Component {
       downPayment: downPayment,
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onInterestRateChange(e) {
+  onInterestRateChange = (e) => {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
     this.mortgageCalculator.interestRate = value;
@@ -178,10 +154,9 @@ export default class MortgageCalculator extends React.Component {
     this.setState({
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onTermMonthsChange(e) {
+  onTermMonthsChange = (e) => {
     let value = e.target.value;
     if (isNaN(value)) return;
     this.mortgageCalculator.months = parseInt(value) * 12;
@@ -189,10 +164,9 @@ export default class MortgageCalculator extends React.Component {
     this.setState({
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onAdditionalPrincipalChange(e) {
+  onAdditionalPrincipalChange = (e) => {
     let value = Util.moneyToValue(e.target.value);
     this.mortgageCalculator.additionalPrincipalPayment = !isNaN(value)
       ? value
@@ -202,10 +176,9 @@ export default class MortgageCalculator extends React.Component {
       additionalPrincipal: value,
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onTaxRateChange(e) {
+  onTaxRateChange = (e) => {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
     this.mortgageCalculator.taxRate = value;
@@ -213,10 +186,9 @@ export default class MortgageCalculator extends React.Component {
     this.setState({
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onInsuranceRateChange(e) {
+  onInsuranceRateChange = (e) => {
     let value = e.target ? Util.percentToValue(e.target.value) : "";
     if (isNaN(value)) return;
     this.mortgageCalculator.insuranceRate = value;
@@ -224,10 +196,9 @@ export default class MortgageCalculator extends React.Component {
     this.setState({
       mortgage: mortgage,
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onMortgageInsuranceRateChange(e) {
+  onMortgageInsuranceRateChange = (e) => {
     let value = Util.percentToValue(e.target.value);
     if (isNaN(value)) return;
 
@@ -239,10 +210,9 @@ export default class MortgageCalculator extends React.Component {
         mortgage: mortgage,
       };
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
 
-  onMortgageInsuranceEnabledChange(e) {
+  onMortgageInsuranceEnabledChange = (e) => {
     let mortgage;
     this.setState((prevState) => {
       this.mortgageCalculator.mortgageInsuranceEnabled = !prevState.mortgageInsuranceEnabled;
@@ -253,8 +223,7 @@ export default class MortgageCalculator extends React.Component {
         mortgage: mortgage,
       };
     });
-    this.onMortgageChange(mortgage);
-  }
+  };
   onInsuranceEnabledChange = (e) => {
     this.setState((prevState) => {
       return {
