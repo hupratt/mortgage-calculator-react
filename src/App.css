@@ -1,93 +1,92 @@
-* {
-  box-sizing: border-box;
-}
-
 html,
 body {
-  margin: 0;
-  padding: 0;
   height: 100%;
-  min-height: 100%;
+  margin: 0;
+  font-family: "Arial Black", sans-serif;
 }
 
-/* Layout */
-.grid {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+h2 {
+  font-size: 6rem;
 }
-.grid .column {
-  position: relative;
-  overflow: hidden;
-  width: 50%;
-  text-align: center;
+
+.sides {
+  animation: 0.7s curtain cubic-bezier(0.86, 0, 0.07, 1) 0.4s both;
+
+  display: grid;
+  grid-template-columns: 50vw 50vw;
 }
-.grid .column img {
-  position: relative;
-  display: block;
+
+@keyframes curtain {
+  0% {
+    grid-gap: 100vw;
+  }
+
+  100% {
+    grid-gap: 0;
+  }
+}
+
+.intro {
   height: 100%;
-  object-fit: cover;
-  width: 100%;
-  opacity: 0.8;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
-.grid .column .content {
+
+.sides {
+  position: relative;
+}
+
+.side {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  padding: 2em;
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 1.3rem;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
+
+  font-size: 1rem;
 }
 
-.grid .column .content::before,
-.grid .column .content::after {
-  pointer-events: none;
+.house {
+  background-color: #dcc9a1;
+  color: #534325;
 }
 
-.grid .column h2 {
-  word-spacing: -0.15rem;
-  font-weight: 300;
+.etf {
+  background-color: #1b636f;
+  color: #ffffff;
+  flex-direction: column-reverse;
 }
 
-.grid .column h2 span {
-  display: block;
-  font-weight: 800;
-  font-size: 2.8rem;
+.name {
+  margin: 0.3em;
 }
 
-.grid .column h2,
-.grid .column p {
-  margin: 0;
+.emoji {
+  font-size: 30vh;
 }
 
-.grid .column p {
-  letter-spacing: 1px;
-  font-size: 68.5%;
+.versus {
+  position: absolute;
+  width: 8vw;
+  height: 8vw;
+  background: #ffffff;
+  border-radius: 50%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.4vw;
+  color: #123456;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #1b636f #dcc9a1 #dcc9a1 #1b636f;
+  transform: rotate(-45deg);
 }
 
-#west {
-  background: url(https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/cd36d436499555.571edc76c7f9b.jpg)
-    no-repeat top center;
-  background-size: cover;
-}
-#east {
-  background: url(https://cdn.dribbble.com/users/1013025/screenshots/10778650/image.png)
-    no-repeat center top;
-  background-size: cover;
-}
-#west .content {
-  background: rgba(25, 235, 248, 0.5);
-}
-#east .content {
-  background: rgba(234, 210, 24, 0.5);
+.versus span {
+  transform: rotate(35deg);
 }

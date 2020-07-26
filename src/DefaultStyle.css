@@ -1,11 +1,11 @@
 :root {
-  --primary-one: #30c5ff;
-  --primary-one-light: #a0e4ff;
+  --primary-one: #959595;
+  --primary-one-light: #bebebe;
   --primary-two: #ffe74c;
   --primary-three: #69e062;
   --secondary-one: #2a2d34;
   --secondary-one-light: #9e9fa2;
-  --secondary-two: #1b4965;
+  --secondary-two: #5c5c5c;
 }
 
 :local(.container) {
@@ -20,7 +20,7 @@
 
 :local(label) {
   display: block;
-  color: #777777;
+  color: #000000;
 }
 
 :local(.inputIcon) {

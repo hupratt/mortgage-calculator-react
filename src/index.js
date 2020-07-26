@@ -1,18 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MortgageCalculator from "./MortgageCalculator";
-import ReactTooltip from "react-tooltip";
-import "./App.css";
+import App from "./App";
 
 const root = (
   <React.Fragment>
-    <ReactTooltip
-      place="bottom"
-      effect="solid"
-      delayHide={1000}
-      data-event="click"
-    />
-    <MortgageCalculator showPaymentSchedule />
+    <App />
   </React.Fragment>
 );
 
