@@ -1,11 +1,11 @@
 import React from "react";
-import MortgageCalculator from "./MortgageCalculator";
+import BuyOrRent from "./features/BuyOrRent";
 import "./App.css";
 
 const App = () => {
   return (
     <React.Fragment>
-      <MortgageCalculator showPaymentSchedule />
+      <BuyOrRent showPaymentSchedule />
     </React.Fragment>
   );
 };

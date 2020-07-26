@@ -1,6 +1,6 @@
-import Util from "./Util";
+import Util from "../Util";
 import React from "react";
-import DefaultStyles from "./DefaultStyle.css";
+import DefaultStyles from "../DefaultStyle.css";
 import ReactTooltip from "react-tooltip";
 
 const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {

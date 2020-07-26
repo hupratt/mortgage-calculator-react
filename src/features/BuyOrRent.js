@@ -1,12 +1,14 @@
-import Switch from "./Switch";
 import React from "react";
-import Util from "./Util";
-import mortgageJs, { calculateMonthlyRate } from "./mortgage-js-modified";
-import DefaultStyles from "./DefaultStyle.css";
-import PaymentSchedule from "./PaymentSchedule";
-import InputWrapper from "./InputWrapper";
-import IconInput from "./IconInput";
-import Tooltip from "./Tooltip";
+import Switch from "../components/Switch";
+import Util from "../Util";
+import mortgageJs, {
+  calculateMonthlyRate,
+} from "../components/mortgage-js-modified";
+import PaymentSchedule from "../components/PaymentSchedule";
+import InputWrapper from "../components/InputWrapper";
+import IconInput from "../components/IconInput";
+import Tooltip from "../components/Tooltip";
+import DefaultStyles from "../DefaultStyle.css";
 
 const numberOfOptions = 10;
 const stepYears = 5;
@@ -28,7 +30,7 @@ const DefaultAdditionalPrincipalPayment = 0;
 const DefaultTermMonths = numberOfOptions * 12 * stepYears;
 const DefaultDownPayment = (DefaultPrice * 20) / 100;
 
-export default class MortgageCalculator extends React.Component {
+export default class BuyOrRent extends React.Component {
   mortgageCalculator = mortgageJs.createMortgageCalculator();
 
   constructor(props) {
@@ -381,7 +383,7 @@ export default class MortgageCalculator extends React.Component {
         <div className="intro">
           <div className="sides">
             <div className="side house">
-              <h2 className="name">Acheter un bien</h2>
+              <h2 className="name">Acheter au Luxembourg</h2>
               <div className="emoji">🏡</div>
               <form className={styles.inputForm}>
                 <InputWrapper styles={styles} label="Prix du bien">
@@ -483,7 +485,7 @@ export default class MortgageCalculator extends React.Component {
                   />
                 </InputWrapper>
                 <Tooltip
-                  source="Frais de maintenance de du bien immobilier"
+                  source="Frais de maintenance du bien immobilier"
                   id="maintenanceFee"
                 />
                 <InputWrapper styles={styles} label="Frais de maintenance">
@@ -506,17 +508,25 @@ export default class MortgageCalculator extends React.Component {
                   />
                 </InputWrapper>
                 {this.state.insuranceEnabled ? (
-                  <InputWrapper styles={styles}>
-                    <IconInput
-                      styles={styles}
-                      icon="%"
-                      type="number"
-                      name="insuranceRate"
-                      defaultValue={Util.percentValue(insuranceRate, false)}
-                      step="0.01"
-                      onInput={this.onInsuranceRateChange}
+                  <React.Fragment>
+                    <Tooltip
+                      source="$\cfrac{Prix Du Bien * assuranceHabitation}{12}$"
+                      id="insuranceRate"
                     />
-                  </InputWrapper>
+                    <InputWrapper styles={styles}>
+                      <IconInput
+                        styles={styles}
+                        icon="%"
+                        type="number"
+                        name="insuranceRate"
+                        data-for="insuranceRate"
+                        data-tip
+                        defaultValue={Util.percentValue(insuranceRate, false)}
+                        step="0.01"
+                        onInput={this.onInsuranceRateChange}
+                      />
+                    </InputWrapper>
+                  </React.Fragment>
                 ) : null}
 
                 <InputWrapper styles={styles} label="Assurance du prêt">
@@ -526,20 +536,28 @@ export default class MortgageCalculator extends React.Component {
                   />
                 </InputWrapper>
                 {mortgageInsuranceEnabled ? (
-                  <InputWrapper styles={styles}>
-                    <IconInput
-                      styles={styles}
-                      icon="%"
-                      type="number"
-                      name="mortgageInsuranceRate"
-                      defaultValue={Util.percentValue(
-                        mortgageInsuranceRate,
-                        false
-                      )}
-                      step="0.01"
-                      onInput={this.onMortgageInsuranceRateChange}
+                  <React.Fragment>
+                    <Tooltip
+                      source="$\cfrac{Montant emprunté * taux}{12}$"
+                      id="mortgageInsuranceRate"
                     />
-                  </InputWrapper>
+                    <InputWrapper styles={styles}>
+                      <IconInput
+                        styles={styles}
+                        icon="%"
+                        type="number"
+                        data-for="mortgageInsuranceRate"
+                        data-tip
+                        name="mortgageInsuranceRate"
+                        defaultValue={Util.percentValue(
+                          mortgageInsuranceRate,
+                          false
+                        )}
+                        step="0.01"
+                        onInput={this.onMortgageInsuranceRateChange}
+                      />
+                    </InputWrapper>
+                  </React.Fragment>
                 ) : null}
               </form>
             </div>
@@ -668,7 +686,7 @@ export default class MortgageCalculator extends React.Component {
               />
               <div
                 className={styles.resultRow}
-                data-tip="Assurance mensuelle du prêt"
+                data-tip
                 data-for="mortgageInsuranceDesc"
               >
                 <div className={styles.resultLabel}>
