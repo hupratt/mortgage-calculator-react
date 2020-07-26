@@ -277,6 +277,7 @@ export default class BuyOrRent extends React.Component {
   onYearlyMaintenanceFeeChange = (e) => {
     let value = Util.moneyToValue(e.target.value);
     if (isNaN(value)) return;
+    console.log("value", value);
     this.mortgageCalculator.yearlyMaintenanceFee = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState({
@@ -462,8 +463,14 @@ export default class BuyOrRent extends React.Component {
                     {this.renderMonths(monthsArr)}
                   </select>
                 </InputWrapper>
-                <InputWrapper styles={styles} label="Taxe Foncière">
+                <InputWrapper styles={styles} label="Taxe Foncière annuelle">
+                  <Tooltip
+                    source="${Prix Du Bien * taxeFonciere}$"
+                    id="tFonciere"
+                  />
                   <IconInput
+                    data-tip
+                    data-for="tFonciere"
                     styles={styles}
                     icon="%"
                     type="number"
@@ -488,7 +495,10 @@ export default class BuyOrRent extends React.Component {
                   source="Frais de maintenance du bien immobilier"
                   id="maintenanceFee"
                 />
-                <InputWrapper styles={styles} label="Frais de maintenance">
+                <InputWrapper
+                  styles={styles}
+                  label="Frais annuels de maintenance"
+                >
                   <IconInput
                     styles={styles}
                     icon="€"
@@ -501,7 +511,10 @@ export default class BuyOrRent extends React.Component {
                     onInput={this.onYearlyMaintenanceFeeChange}
                   />
                 </InputWrapper>
-                <InputWrapper styles={styles} label="Assurance habitation">
+                <InputWrapper
+                  styles={styles}
+                  label="Assurance habitation annuelle"
+                >
                   <Switch
                     active={this.state.insuranceEnabled}
                     onChange={this.onInsuranceEnabledChange}
@@ -510,7 +523,7 @@ export default class BuyOrRent extends React.Component {
                 {this.state.insuranceEnabled ? (
                   <React.Fragment>
                     <Tooltip
-                      source="$\cfrac{Prix Du Bien * assuranceHabitation}{12}$"
+                      source="${Prix Du Bien * tauxAnnuel}$"
                       id="insuranceRate"
                     />
                     <InputWrapper styles={styles}>
@@ -529,7 +542,10 @@ export default class BuyOrRent extends React.Component {
                   </React.Fragment>
                 ) : null}
 
-                <InputWrapper styles={styles} label="Assurance du prêt">
+                <InputWrapper
+                  styles={styles}
+                  label="Assurance annuelle du prêt"
+                >
                   <Switch
                     active={mortgageInsuranceEnabled}
                     onChange={this.onMortgageInsuranceEnabledChange}
@@ -538,7 +554,7 @@ export default class BuyOrRent extends React.Component {
                 {mortgageInsuranceEnabled ? (
                   <React.Fragment>
                     <Tooltip
-                      source="$\cfrac{Montant emprunté * taux}{12}$"
+                      source="${Montant emprunté * tauxAnnuel}$"
                       id="mortgageInsuranceRate"
                     />
                     <InputWrapper styles={styles}>
@@ -654,7 +670,7 @@ export default class BuyOrRent extends React.Component {
             id="taxFonciere"
           />
           <div className={styles.resultRow} data-for="taxFonciere" data-tip>
-            <div className={styles.resultLabel}>Taxe foncière: </div>
+            <div className={styles.resultLabel}>Taxe foncière mensuelle </div>
             <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
           </div>
 
@@ -698,13 +714,16 @@ export default class BuyOrRent extends React.Component {
               </div>
             </React.Fragment>
           ) : null}
-          <Tooltip source="Coût Total Mensuel" id="total" />
+          <Tooltip
+            source="Remboursement du Principal + Remboursement des Intérêts + Assurance habitation + Assurance du prêt + Taxe foncière mensuelle"
+            id="total"
+          />
           <div
             className={`${styles.resultRow} ${styles.totalPayment}`}
             data-tip
             data-for="total"
           >
-            <div className={styles.resultLabel}>Total:</div>
+            <div className={styles.resultLabel}>Coût Total Mensuel:</div>
             <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
           </div>
         </div>

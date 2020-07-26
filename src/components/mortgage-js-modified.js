@@ -48,6 +48,8 @@ class MortgageCalculator {
     let homeOwnerInsurance = MortgageCalculator.roundPenny(
       (this.totalPrice * this.insuranceRate) / 12
     );
+    const monthlyMaintenanceFee = this.yearlyMaintenanceFee / 12;
+
     let paymentSchedule = MortgageCalculator.calculatePaymentSchedule(
       loanAmount,
       this.interestRate,
@@ -58,7 +60,7 @@ class MortgageCalculator {
       this.transactionFeeRate,
       this.monthlyRent,
       this.notaryFee,
-      this.yearlyMaintenanceFee,
+      monthlyMaintenanceFee,
       mortgageInsurance,
       propertyTax,
       homeOwnerInsurance,
@@ -69,16 +71,16 @@ class MortgageCalculator {
       ? paymentSchedule[0].totalPayment
       : 0;
 
-    console.log({
-      loanAmount: loanAmount,
-      principalAndInterest: piPayment,
-      tax: propertyTax,
-      insurance: homeOwnerInsurance,
-      total: piPayment + propertyTax + homeOwnerInsurance + mortgageInsurance,
-      termMonths: this.months,
-      paymentSchedule: paymentSchedule,
-      mortgageInsurance: mortgageInsurance,
-    });
+    // console.log({
+    //   loanAmount: loanAmount,
+    //   principalAndInterest: piPayment,
+    //   tax: propertyTax,
+    //   insurance: homeOwnerInsurance,
+    //   total: piPayment + propertyTax + homeOwnerInsurance + mortgageInsurance,
+    //   termMonths: this.months,
+    //   paymentSchedule: paymentSchedule,
+    //   mortgageInsurance: mortgageInsurance,
+    // });
     return {
       loanAmount,
       principalAndInterest: piPayment,
@@ -101,7 +103,7 @@ class MortgageCalculator {
     transactionFeeRate,
     monthlyRent,
     notaryFee,
-    yearlyMaintenanceFee,
+    monthlyMaintenanceFee,
     mortgageInsurance,
     propertyTax,
     homeOwnerInsurance,
@@ -142,18 +144,23 @@ class MortgageCalculator {
         principalPayment +
         mortgageInsurance +
         propertyTax +
-        homeOwnerInsurance;
+        homeOwnerInsurance +
+        monthlyMaintenanceFee;
       if (i === 0) {
         costOption1 += downPayment;
+        costOption1 += notaryFee;
+        console.log(
+          interestPayment,
+          principalPayment,
+          mortgageInsurance,
+          propertyTax,
+          homeOwnerInsurance,
+          monthlyMaintenanceFee,
+          downPayment,
+          notaryFee,
+          costOption1
+        );
       }
-      console.log(
-        "mortgageInsurance",
-        mortgageInsurance,
-        "propertyTax",
-        propertyTax,
-        "homeOwnerInsurance",
-        homeOwnerInsurance
-      );
       totalInterest += interestPayment;
       totalPayments += totalPayment;
       payments[i] = {
