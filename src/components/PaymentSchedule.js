@@ -51,7 +51,7 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         <div data-tip="Acompte + Frais de notaire + Remboursement du Principal + Remboursement des Intérêts + Assurance habitation + Assurance du prêt + Taxe foncière mensuelle + Frais mensuels de maintenance">
           Coûts liés à l'option 1
         </div>
-        <div data-tip="Loyer + Frais de transaction ETF">
+        <div data-tip="Loyer + Coûts liés à l'option 1 x Frais de transaction mensuel ETF">
           Coûts liés à l'option 2
         </div>
         <div data-tip="(Coûts liés à l'option 1 -  Coûts liés à l'option 2) x (1 + Rendement mensuel de l'ETF )">

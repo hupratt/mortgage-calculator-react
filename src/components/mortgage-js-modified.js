@@ -71,16 +71,6 @@ class MortgageCalculator {
       ? paymentSchedule[0].totalPayment
       : 0;
 
-    // console.log({
-    //   loanAmount: loanAmount,
-    //   principalAndInterest: piPayment,
-    //   tax: propertyTax,
-    //   insurance: homeOwnerInsurance,
-    //   total: piPayment + propertyTax + homeOwnerInsurance + mortgageInsurance,
-    //   termMonths: this.months,
-    //   paymentSchedule: paymentSchedule,
-    //   mortgageInsurance: mortgageInsurance,
-    // });
     return {
       loanAmount,
       principalAndInterest: piPayment,
@@ -160,6 +150,7 @@ class MortgageCalculator {
         valueOption2 += valueInvestedInETF;
       } else {
         valueOption2 = valueInvestedInETF;
+        console.log('(1 + calculateMonthlyRate(returnRate))',(1 + calculateMonthlyRate(returnRate)));
       }
       totalInterest += interestPayment;
       totalPayments += totalPayment;
