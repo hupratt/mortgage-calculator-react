@@ -26,17 +26,16 @@
 :local(.inputIcon) {
   position: absolute;
   width: 2em;
-  padding: 0.7em 0 0 0;
-  margin: 2px 0 0 0;
+  margin-left: -0.5em;
   text-align: center;
   line-height: normal;
   color: var(--secondary-one-light);
+  margin-top: 0.7em;
 }
 
 :local(input) {
   width: 100%;
   text-indent: 1em;
-  font-size: 16px;
   padding: 0.7em;
   margin: 0 0 0.2em 0;
   border: none;
@@ -45,6 +44,7 @@
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  font-size: 1rem;
 }
 
 :local(input:focus) {

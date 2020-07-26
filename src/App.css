@@ -3,12 +3,15 @@ body {
   height: 100%;
   margin: 0;
   font-family: "Arial Black", sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 
 h2 {
-  font-size: 5rem;
+  font-size: 3rem;
+}
+
+form {
+  width: 35vw;
 }
 
 select {

@@ -15,10 +15,10 @@ const stepYears = 5;
 
 const DefaultPrice = 800000;
 const DefaultNotaryFee = 30000;
-const DefaultYearlyMaintenanceFee = 1000;
-const DefaultInterestRate = 0.01;
+const DefaultYearlyMaintenanceFee = 8000;
+const DefaultInterestRate = 0.023;
 const DefaultReturnRate = 0.085;
-const DefaultMonthlyRent = 900;
+const DefaultMonthlyRent = 800;
 const DefaultTransactionFeeRate = 0.003;
 const DefaultYearlyAppreciationRate = 0.03;
 const DefaultTaxRate = 0.01;
@@ -119,7 +119,6 @@ export default class BuyOrRent extends React.Component {
         .mortgageInsuranceEnabled,
       additionalPrincipal: 0,
       mortgage: this.mortgageCalculator.calculatePayment(),
-      showMonthlyPayments: false,
       insuranceEnabled: this.mortgageCalculator.insuranceEnabled,
     };
   }
@@ -343,12 +342,7 @@ export default class BuyOrRent extends React.Component {
   };
 
   render() {
-    const {
-      totalPrice,
-      downPayment,
-      showMonthlyPayments,
-      additionalPrincipal,
-    } = this.state;
+    const { totalPrice, downPayment, additionalPrincipal } = this.state;
     const {
       loanAmount,
       principalAndInterest,
@@ -636,113 +630,106 @@ export default class BuyOrRent extends React.Component {
             </div>
           </div>
         </div>
-
-        <div className={styles.results}>
-          <Tooltip source="Montant emprunté" id="emprunt" />
-          <div className={styles.resultRow} data-tip data-for="emprunt">
-            <div className={styles.resultLabel}>Emprunt:</div>
-            <div className={styles.resultValue}>
-              {Util.moneyValue(loanAmount)}
-            </div>
-          </div>
-          <Tooltip source="${(1 + TAEG)^{1 / 12}}{-1}$" id="monthlyRate" />
-          <div className={styles.resultRow} data-tip data-for="monthlyRate">
-            <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
-            <div className={styles.resultValue}>
-              {Util.percentValue(calculateMonthlyRate(interestRate))}
-            </div>
-          </div>
-        </div>
-        <div className={styles.results}>
-          <Tooltip
-            source="$\cfrac{tauxMensuel * montantEmprunté * (1+tauxMensuel)^{horizon}}{(1+tauxMensuel)^{horizon}-1}$"
-            id="principalAndInterestMensualité"
-          />
-          <div
-            className={styles.resultRow}
-            data-tip
-            data-for="principalAndInterestMensualité"
-          >
-            <div className={styles.resultLabel}>Mensualité:</div>
-            <div className={styles.resultValue}>
-              {Util.moneyValue(principalAndInterest)}
-            </div>
-          </div>
-          <Tooltip
-            source="$\cfrac{Prix Du Bien * taxeFonciere}{12}$"
-            id="taxFonciere"
-          />
-          <div className={styles.resultRow} data-for="taxFonciere" data-tip>
-            <div className={styles.resultLabel}>Taxe foncière mensuelle </div>
-            <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
-          </div>
-
-          {this.state.insuranceEnabled ? (
-            <React.Fragment>
-              <Tooltip
-                source="$\cfrac{Prix Du Bien * assuranceHabitation}{12}$"
-                id="houseInsurance"
-              />
-              <div
-                className={styles.resultRow}
-                data-tip
-                data-for="houseInsurance"
-              >
-                <div className={styles.resultLabel}>
-                  Assurance habitation mensuelle
-                </div>
-                <div className={styles.resultValue}>
-                  {Util.moneyValue(insurance)}
-                </div>
+        <div className="container">
+          <div className={styles.results}>
+            <Tooltip source="Montant emprunté" id="emprunt" />
+            <div className={styles.resultRow} data-tip data-for="emprunt">
+              <div className={styles.resultLabel}>Emprunt:</div>
+              <div className={styles.resultValue}>
+                {Util.moneyValue(loanAmount)}
               </div>
-            </React.Fragment>
-          ) : null}
-          {mortgageInsuranceEnabled ? (
-            <React.Fragment>
-              <Tooltip
-                source="$\cfrac{Montant emprunté * taux}{12}$"
-                id="mortgageInsuranceDesc"
-              />
-              <div
-                className={styles.resultRow}
-                data-tip
-                data-for="mortgageInsuranceDesc"
-              >
-                <div className={styles.resultLabel}>
-                  Assurance mensuelle du prêt
-                </div>
-                <div className={styles.resultValue}>
-                  {Util.moneyValue(mortgageInsurance)}
-                </div>
+            </div>
+            <Tooltip source="${(1 + TAEG)^{1 / 12}}{-1}$" id="monthlyRate" />
+            <div className={styles.resultRow} data-tip data-for="monthlyRate">
+              <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
+              <div className={styles.resultValue}>
+                {Util.percentValue(calculateMonthlyRate(interestRate))}
               </div>
-            </React.Fragment>
-          ) : null}
-          <Tooltip
-            source="Remboursement du Principal + Remboursement des Intérêts + Assurance habitation + Assurance du prêt + Taxe foncière mensuelle"
-            id="total"
-          />
-          <div
-            className={`${styles.resultRow} ${styles.totalPayment}`}
-            data-tip
-            data-for="total"
-          >
-            <div className={styles.resultLabel}>Coût Total Mensuel:</div>
-            <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
+            </div>
+          </div>
+
+          <div className={styles.results}>
+            <Tooltip
+              source="$\cfrac{tauxMensuel * montantEmprunté * (1+tauxMensuel)^{horizon}}{(1+tauxMensuel)^{horizon}-1}$"
+              id="principalAndInterestMensualité"
+            />
+            <div
+              className={styles.resultRow}
+              data-tip
+              data-for="principalAndInterestMensualité"
+            >
+              <div className={styles.resultLabel}>
+                Remboursement du Principal + Intérêts:
+              </div>
+              <div className={styles.resultValue}>
+                {Util.moneyValue(principalAndInterest)}
+              </div>
+            </div>
+            <Tooltip
+              source="$\cfrac{Prix Du Bien * taxeFonciere}{12}$"
+              id="taxFonciere"
+            />
+            <div className={styles.resultRow} data-for="taxFonciere" data-tip>
+              <div className={styles.resultLabel}>Taxe foncière mensuelle </div>
+              <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
+            </div>
+
+            {this.state.insuranceEnabled ? (
+              <React.Fragment>
+                <Tooltip
+                  source="$\cfrac{Prix Du Bien * assuranceHabitation}{12}$"
+                  id="houseInsurance"
+                />
+                <div
+                  className={styles.resultRow}
+                  data-tip
+                  data-for="houseInsurance"
+                >
+                  <div className={styles.resultLabel}>
+                    Assurance habitation mensuelle
+                  </div>
+                  <div className={styles.resultValue}>
+                    {Util.moneyValue(insurance)}
+                  </div>
+                </div>
+              </React.Fragment>
+            ) : null}
+            {mortgageInsuranceEnabled ? (
+              <React.Fragment>
+                <Tooltip
+                  source="$\cfrac{Montant emprunté * taux}{12}$"
+                  id="mortgageInsuranceDesc"
+                />
+                <div
+                  className={styles.resultRow}
+                  data-tip
+                  data-for="mortgageInsuranceDesc"
+                >
+                  <div className={styles.resultLabel}>
+                    Assurance mensuelle du prêt
+                  </div>
+                  <div className={styles.resultValue}>
+                    {Util.moneyValue(mortgageInsurance)}
+                  </div>
+                </div>
+              </React.Fragment>
+            ) : null}
+            <Tooltip
+              source="Remboursement du Principal + Remboursement des Intérêts + Assurance habitation + Assurance du prêt + Taxe foncière mensuelle"
+              id="total"
+            />
+            <div
+              className={`${styles.resultRow} ${styles.totalPayment}`}
+              data-tip
+              data-for="total"
+            >
+              <div className={styles.resultLabel}>Coût Total Mensuel:</div>
+              <div className={styles.resultValue}>{Util.moneyValue(total)}</div>
+            </div>
           </div>
         </div>
 
-        <div className={styles.advancedButton}>
-          <button
-            type="button"
-            onClick={() =>
-              this.setState({ showMonthlyPayments: !showMonthlyPayments })
-            }
-          >
-            {showMonthlyPayments ? "Cacher" : "Afficher"} le détail des
-            paiements mensuels
-          </button>
-        </div>
-        {showMonthlyPayments ? (
+        {this.state.mortgage ? (
           <div className={styles.schedule}>
             <PaymentSchedule mortgage={this.state.mortgage} />
           </div>
