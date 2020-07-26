@@ -121,6 +121,7 @@ class MortgageCalculator {
     let payments = [];
     let totalInterest = 0;
     let totalPayments = 0;
+    let valueOption2 = 0;
     let i = 0;
     while (principal > 0 && i < termMonths) {
       housePrice = MortgageCalculator.roundPenny(
@@ -139,6 +140,7 @@ class MortgageCalculator {
         principal = 0;
       }
       let totalPayment = interestPayment + principalPayment;
+
       let costOption1 =
         interestPayment +
         principalPayment +
@@ -149,17 +151,15 @@ class MortgageCalculator {
       if (i === 0) {
         costOption1 += downPayment;
         costOption1 += notaryFee;
-        console.log(
-          interestPayment,
-          principalPayment,
-          mortgageInsurance,
-          propertyTax,
-          homeOwnerInsurance,
-          monthlyMaintenanceFee,
-          downPayment,
-          notaryFee,
-          costOption1
-        );
+      }
+
+      const costOption2 = monthlyRent + costOption1 * transactionFeeRate;
+      const valueInvestedInETF =
+        (costOption1 - costOption2) * (1 + calculateMonthlyRate(returnRate));
+      if (i !== 0) {
+        valueOption2 += valueInvestedInETF;
+      } else {
+        valueOption2 = valueInvestedInETF;
       }
       totalInterest += interestPayment;
       totalPayments += totalPayment;
@@ -173,6 +173,8 @@ class MortgageCalculator {
         balance: principal,
         housePrice,
         costOption1,
+        costOption2,
+        valueOption2,
       };
       i++;
     }

@@ -23,6 +23,8 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
         <div>{Util.moneyValue(payment.balance, showPennies)}</div>
         <div>{Util.moneyValue(payment.housePrice, showPennies)}</div>
         <div>{Util.moneyValue(payment.costOption1, showPennies)}</div>
+        <div>{Util.moneyValue(payment.costOption2, showPennies)}</div>
+        <div>{Util.moneyValue(payment.valueOption2, showPennies)}</div>
       </li>
     );
   });
@@ -47,8 +49,13 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
           Valeur de l'option 1: Acheter
         </div>
         <div data-tip="Acompte + Frais de notaire + Remboursement du Principal + Remboursement des Intérêts + Assurance habitation + Assurance du prêt + Taxe foncière mensuelle + Frais mensuels de maintenance">
-          {/* <div data-tip="Valeur de l'investissement: location d'une propriété + ETF"> */}
           Coûts liés à l'option 1
+        </div>
+        <div data-tip="Loyer + Frais de transaction ETF">
+          Coûts liés à l'option 2
+        </div>
+        <div data-tip="(Coûts liés à l'option 1 -  Coûts liés à l'option 2) x (1 + Rendement mensuel de l'ETF )">
+          Valeur de l'option 2: Louer
         </div>
       </li>
       {paymentRows}

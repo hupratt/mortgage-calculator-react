@@ -584,7 +584,7 @@ export default class BuyOrRent extends React.Component {
               <h2 className="name">Louer & Investir</h2>
               <div className="emoji">💹</div>
               <form className={styles.inputForm}>
-                <InputWrapper styles={styles} label="Rendement ETF">
+                <InputWrapper styles={styles} label="Rendement annuel ETF">
                   <Tooltip
                     source="Rendement annuel de l'ETF ou autre instrument financier"
                     id="returnRate"
@@ -605,7 +605,10 @@ export default class BuyOrRent extends React.Component {
                   source="Frais de transaction lié à l'ETF"
                   id="transactionFeeRate"
                 />
-                <InputWrapper styles={styles} label="Frais de transaction ETF">
+                <InputWrapper
+                  styles={styles}
+                  label="Frais de transaction ETF par transaction"
+                >
                   <IconInput
                     styles={styles}
                     icon="%"
@@ -618,7 +621,7 @@ export default class BuyOrRent extends React.Component {
                     onInput={this.onTransactionFeeChange}
                   />
                 </InputWrapper>
-                <InputWrapper styles={styles} label="Loyer">
+                <InputWrapper styles={styles} label="Loyer mensuel">
                   <IconInput
                     styles={styles}
                     icon="€"

@@ -3,6 +3,8 @@ body {
   height: 100%;
   margin: 0;
   font-family: "Arial Black", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 h2 {
@@ -58,6 +60,11 @@ select {
   background-color: #1b636f;
   color: #ffffff;
   flex-direction: column-reverse;
+}
+
+.etf label,
+.etf input {
+  color: #ffffff;
 }
 
 .name {
