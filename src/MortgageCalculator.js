@@ -413,21 +413,31 @@ export default class MortgageCalculator extends React.Component {
                     onChange={this.onDownPaymentPercentChange}
                   />
                 </InputWrapper>
+                <Tooltip
+                  source="Taux d'intérêt effectif annuel TAEG: comprend le taux d’intérêt, l’assurance, et les frais éventuels liés au crédit tels que les frais de dossier"
+                  id="interestRate"
+                />
                 <InputWrapper styles={styles} label="TAEG">
                   <IconInput
-                    data-tip="Taux d'intérêt effectif annuel TAEG: comprend le taux d’intérêt, l’assurance, et les frais éventuels liés au crédit tels que les frais de dossier"
+                    data-tip
                     styles={styles}
                     icon="%"
                     type="number"
+                    data-for="interestRate"
                     name="interestRate"
                     step="0.01"
                     defaultValue={Util.percentValue(interestRate, false)}
                     onInput={this.onInterestRateChange}
                   />
                 </InputWrapper>
+                <Tooltip
+                  source="Taux d'appréciation annuel du bien"
+                  id="yearlyAppreciationRate"
+                />
                 <InputWrapper styles={styles} label="Appréciation du bien">
                   <IconInput
-                    data-tip="Taux d'appréciation annuel du bien"
+                    data-tip
+                    data-for="yearlyAppreciationRate"
                     styles={styles}
                     icon="%"
                     type="number"
@@ -472,11 +482,16 @@ export default class MortgageCalculator extends React.Component {
                     onInput={this.onNotaryFeeChange}
                   />
                 </InputWrapper>
+                <Tooltip
+                  source="Frais de maintenance de du bien immobilier"
+                  id="maintenanceFee"
+                />
                 <InputWrapper styles={styles} label="Frais de maintenance">
                   <IconInput
                     styles={styles}
                     icon="€"
-                    data-tip="Frais de maintenance de du bien immobilier"
+                    data-tip
+                    data-for="maintenanceFee"
                     type="number"
                     name="maintenanceFee"
                     defaultValue={parseInt(yearlyMaintenanceFee)}
@@ -536,10 +551,15 @@ export default class MortgageCalculator extends React.Component {
               <div className="emoji">💹</div>
               <form className={styles.inputForm}>
                 <InputWrapper styles={styles} label="Rendement ETF">
+                  <Tooltip
+                    source="Rendement annuel de l'ETF ou autre instrument financier"
+                    id="returnRate"
+                  />
                   <IconInput
                     styles={styles}
                     icon="%"
-                    data-tip="Rendement annuel de l'ETF ou autre instrument financier"
+                    data-tip
+                    data-for="returnRate"
                     type="number"
                     name="returnRate"
                     defaultValue={Util.percentValue(returnRate, false)}
@@ -547,11 +567,16 @@ export default class MortgageCalculator extends React.Component {
                     onInput={this.onReturnRateChange}
                   />
                 </InputWrapper>
+                <Tooltip
+                  source="Frais de transaction lié à l'ETF"
+                  id="transactionFeeRate"
+                />
                 <InputWrapper styles={styles} label="Frais de transaction ETF">
                   <IconInput
                     styles={styles}
                     icon="%"
-                    data-tip="Frais de transaction lié à l'ETF"
+                    data-tip
+                    data-for="transactionFeeRate"
                     type="number"
                     name="transactionFeeRate"
                     defaultValue={Util.percentValue(transactionFeeRate, false)}
@@ -576,65 +601,90 @@ export default class MortgageCalculator extends React.Component {
         </div>
 
         <div className={styles.results}>
-          <div className={styles.resultRow} data-tip="Montant emprunté">
+          <Tooltip source="Montant emprunté" id="emprunt" />
+          <div className={styles.resultRow} data-tip data-for="emprunt">
             <div className={styles.resultLabel}>Emprunt:</div>
             <div className={styles.resultValue}>
               {Util.moneyValue(loanAmount)}
             </div>
           </div>
+          <Tooltip source="${(1 + TAEG)^{1 / 12}}{-1}$" id="monthlyRate" />
+          <div className={styles.resultRow} data-tip data-for="monthlyRate">
+            <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
+            <div className={styles.resultValue}>
+              {Util.percentValue(calculateMonthlyRate(interestRate))}
+            </div>
+          </div>
+        </div>
+        <div className={styles.results}>
           <Tooltip
             source="$\cfrac{tauxMensuel * montantEmprunté * (1+tauxMensuel)^{horizon}}{(1+tauxMensuel)^{horizon}-1}$"
-            id="principalAndInterest"
+            id="principalAndInterestMensualité"
           />
           <div
             className={styles.resultRow}
             data-tip
-            data-for="principalAndInterest"
+            data-for="principalAndInterestMensualité"
           >
             <div className={styles.resultLabel}>Mensualité:</div>
             <div className={styles.resultValue}>
               {Util.moneyValue(principalAndInterest)}
             </div>
           </div>
-          <Tooltip source="$\cfrac{Prix Du Bien * taux}{12}$" id="tax" />
-          <div className={styles.resultRow} data-for="tax" data-tip>
+          <Tooltip
+            source="$\cfrac{Prix Du Bien * taxeFonciere}{12}$"
+            id="taxFonciere"
+          />
+          <div className={styles.resultRow} data-for="taxFonciere" data-tip>
             <div className={styles.resultLabel}>Taxe foncière: </div>
             <div className={styles.resultValue}>{Util.moneyValue(tax)}</div>
           </div>
-          <div
-            className={styles.resultRow}
-            data-tip="Math.pow(1 + TAEG, 1 / 12) - 1;"
-          >
-            <div className={styles.resultLabel}>Taux d'intérêt mensuel</div>
-            <div className={styles.resultValue}>
-              {Util.percentValue(calculateMonthlyRate(interestRate))}
-            </div>
-          </div>
+
           {this.state.insuranceEnabled ? (
-            <div
-              className={styles.resultRow}
-              data-tip="Assurance habitation mensuelle: (Prix du bien * taux)/12"
-            >
-              <div className={styles.resultLabel}>Assurance habitation</div>
-              <div className={styles.resultValue}>
-                {Util.moneyValue(insurance)}
+            <React.Fragment>
+              <Tooltip
+                source="$\cfrac{Prix Du Bien * assuranceHabitation}{12}$"
+                id="houseInsurance"
+              />
+              <div
+                className={styles.resultRow}
+                data-tip
+                data-for="houseInsurance"
+              >
+                <div className={styles.resultLabel}>
+                  Assurance habitation mensuelle
+                </div>
+                <div className={styles.resultValue}>
+                  {Util.moneyValue(insurance)}
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           ) : null}
           {mortgageInsuranceEnabled ? (
-            <div
-              className={styles.resultRow}
-              data-tip="Assurance mensuelle du prêt: (Montant emprunté * taux)/12"
-            >
-              <div className={styles.resultLabel}>Assurance du prêt:</div>
-              <div className={styles.resultValue}>
-                {Util.moneyValue(mortgageInsurance)}
+            <React.Fragment>
+              <Tooltip
+                source="$\cfrac{Montant emprunté * taux}{12}$"
+                id="mortgageInsuranceDesc"
+              />
+              <div
+                className={styles.resultRow}
+                data-tip="Assurance mensuelle du prêt"
+                data-for="mortgageInsuranceDesc"
+              >
+                <div className={styles.resultLabel}>
+                  Assurance mensuelle du prêt
+                </div>
+                <div className={styles.resultValue}>
+                  {Util.moneyValue(mortgageInsurance)}
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           ) : null}
+          <Tooltip source="Coût Total Mensuel" id="total" />
           <div
             className={`${styles.resultRow} ${styles.totalPayment}`}
-            data-tip="Coût Total Mensuel"
+            data-tip
+            data-for="total"
           >
             <div className={styles.resultLabel}>Total:</div>
             <div className={styles.resultValue}>{Util.moneyValue(total)}</div>

@@ -4,18 +4,8 @@ import ReactTooltip from "react-tooltip";
 
 const Tooltip = ({ source, id }) => {
   return (
-    <ReactTooltip
-      place="bottom"
-      effect="solid"
-      delayHide={1000}
-      id={id}
-      //   id="principalAndInterest"
-      getContent={() => {
-        return null;
-      }}
-    >
+    <ReactTooltip place="bottom" effect="solid" id={id}>
       <MarkdownRender source={source} />
-      {/* <MarkdownRender source="$\de=\frac c d$" /> */}
     </ReactTooltip>
   );
 };

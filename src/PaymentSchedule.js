@@ -31,7 +31,7 @@ const PaymentSchedule = ({ mortgage: { paymentSchedule, total }, styles }) => {
       <ReactTooltip
         place="bottom"
         effect="solid"
-        delayHide={1000}
+        // delayHide={1000}
         data-event="click"
       />
       <li className={_styles.paymentRow + " " + _styles.paymentHeader}>
