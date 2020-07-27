@@ -70,7 +70,6 @@ class MortgageCalculator {
     let piPayment = paymentSchedule.length
       ? paymentSchedule[0].totalPayment
       : 0;
-
     return {
       loanAmount,
       principalAndInterest: piPayment,
@@ -144,13 +143,21 @@ class MortgageCalculator {
       }
 
       const costOption2 = monthlyRent + costOption1 * transactionFeeRate;
+      const monthlyETFreturnRate = 1 + calculateMonthlyRate(returnRate);
       const valueInvestedInETF =
-        (costOption1 - costOption2) * (1 + calculateMonthlyRate(returnRate));
+        (costOption1 - costOption2) * monthlyETFreturnRate;
+
       if (i !== 0) {
         valueOption2 += valueInvestedInETF;
       } else {
+        console.log(
+          "Rendement mensuel de lETF",
+          1 + calculateMonthlyRate(returnRate)
+        );
+        console.log("Valeur investie dans lETF année 1", valueInvestedInETF);
+        console.log("Coût en année 1 de la première option", costOption1);
+        console.log("Coût en année 1 de la deuxième option", costOption2);
         valueOption2 = valueInvestedInETF;
-        console.log('(1 + calculateMonthlyRate(returnRate))',(1 + calculateMonthlyRate(returnRate)));
       }
       totalInterest += interestPayment;
       totalPayments += totalPayment;
@@ -166,6 +173,7 @@ class MortgageCalculator {
         costOption1,
         costOption2,
         valueOption2,
+        monthlyETFreturnRate,
       };
       i++;
     }

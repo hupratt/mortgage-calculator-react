@@ -10,18 +10,18 @@ import IconInput from "../components/IconInput";
 import Tooltip from "../components/Tooltip";
 import DefaultStyles from "../DefaultStyle.css";
 
-const numberOfOptions = 10;
+const numberOfOptions = 6;
 const stepYears = 5;
 
-const DefaultPrice = 800000;
+const DefaultPrice = 1000000;
 const DefaultNotaryFee = 30000;
 const DefaultYearlyMaintenanceFee = 8000;
 const DefaultInterestRate = 0.023;
 const DefaultReturnRate = 0.085;
-const DefaultMonthlyRent = 800;
+const DefaultMonthlyRent = 2200;
 const DefaultTransactionFeeRate = 0.003;
-const DefaultYearlyAppreciationRate = 0.03;
-const DefaultTaxRate = 0.01;
+const DefaultYearlyAppreciationRate = 0.07;
+const DefaultTaxRate = 0.0014;
 const DefaultInsuranceRate = 0;
 const DefaultMortgageInsuranceRate = 0;
 const DefaultDownPaymentPercent = 0.2;
@@ -206,7 +206,6 @@ export default class BuyOrRent extends React.Component {
 
   onYearlyAppreciationRate = (e) => {
     let value = Util.percentToValue(e.target.value);
-    console.log("value", value);
     if (isNaN(value)) return;
     this.mortgageCalculator.houseAppreciationRate = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
@@ -276,7 +275,6 @@ export default class BuyOrRent extends React.Component {
   onYearlyMaintenanceFeeChange = (e) => {
     let value = Util.moneyToValue(e.target.value);
     if (isNaN(value)) return;
-    console.log("value", value);
     this.mortgageCalculator.yearlyMaintenanceFee = value;
     let mortgage = this.mortgageCalculator.calculatePayment();
     this.setState({
@@ -423,7 +421,7 @@ export default class BuyOrRent extends React.Component {
                   source="Taux d'appréciation annuel du bien"
                   id="yearlyAppreciationRate"
                 />
-                <InputWrapper styles={styles} label="Appréciation du bien">
+                <InputWrapper styles={styles} label="Appréciation du bien corrigé de l'inflation">
                   <IconInput
                     data-tip
                     data-for="yearlyAppreciationRate"
@@ -584,7 +582,7 @@ export default class BuyOrRent extends React.Component {
                       Taux d'intérêt mensuel
                     </div>
                     <div className={styles.resultValue}>
-                      {Util.percentValue(calculateMonthlyRate(interestRate))}
+                      {Util.percentValue(calculateMonthlyRate(interestRate), true)}
                     </div>
                   </div>
                 </div>

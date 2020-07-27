@@ -15,7 +15,7 @@ const penniesFormatter = new Intl.NumberFormat("fr-FR", {
 const percentFormatter = new Intl.NumberFormat("fr-FR", {
   style: "percent",
   minimumFractionDigits: 0,
-  maximumFractionDigits: 5,
+  maximumFractionDigits: 3,
 });
 
 export default class Util {
@@ -48,6 +48,10 @@ export default class Util {
     let value = showPennies
       ? penniesFormatter.format(amount)
       : moneyFormatter.format(amount);
+    if (withSymbol === false && value.slice(0, -1).trim().replace(/\s/g, '')==2200) {
+      // return value.substring(1);
+      return value.slice(0, -1).trim().replace(/\s/g, '');
+    }
     if (withSymbol === false) {
       // return value.substring(1);
       return value.slice(0, -1).trim();
