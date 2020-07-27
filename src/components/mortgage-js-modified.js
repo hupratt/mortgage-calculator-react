@@ -148,7 +148,8 @@ class MortgageCalculator {
         (costOption1 - costOption2) * monthlyETFreturnRate;
 
       if (i !== 0) {
-        valueOption2 += valueInvestedInETF;
+        valueOption2 =
+          (valueOption2 + costOption1 - costOption2) * monthlyETFreturnRate;
       } else {
         console.log(
           "Rendement mensuel de lETF",
@@ -157,7 +158,7 @@ class MortgageCalculator {
         console.log("Valeur investie dans lETF année 1", valueInvestedInETF);
         console.log("Coût en année 1 de la première option", costOption1);
         console.log("Coût en année 1 de la deuxième option", costOption2);
-        valueOption2 = valueInvestedInETF;
+        valueOption2 = (costOption1 - costOption2) * monthlyETFreturnRate;
       }
       totalInterest += interestPayment;
       totalPayments += totalPayment;
